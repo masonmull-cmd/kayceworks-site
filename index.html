@@ -1,0 +1,64 @@
+/* Nav */
+nav {
+  display: flex; justify-content: space-between; align-items: center;
+  max-width: 1000px; margin: 0 auto; padding: 1.5rem 2rem;
+}
+nav .logo { font-size: 1.4rem; font-weight: 700; color: #1a1a1a; }
+nav .nav-links a { margin-left: 2rem; color: #555; font-size: 0.95rem; }
+nav .nav-links a:hover { color: #1a1a1a; text-decoration: none; }
+
+/* Hero */
+.hero {
+  text-align: center; padding: 5rem 2rem 4rem;
+  background: linear-gradient(135deg, #f0f4ff 0%, #e8f0fe 100%);
+}
+.hero h1 { font-size: 2.5rem; font-weight: 700; margin-bottom: 1rem; color: #0f172a; }
+.hero p { font-size: 1.15rem; color: #475569; max-width: 600px; margin: 0 auto 2rem; }
+.btn {
+  display: inline-block; padding: 0.85rem 2rem; background: #2563eb; color: #fff;
+  border-radius: 8px; font-size: 1rem; font-weight: 600; transition: background 0.2s;
+}
+.btn:hover { background: #1d4ed8; text-decoration: none; }
+
+/* Sections */
+section { max-width: 1000px; margin: 0 auto; padding: 4rem 2rem; }
+section h2 { font-size: 1.8rem; font-weight: 700; margin-bottom: 1.5rem; color: #0f172a; }
+
+/* Services */
+.services-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem; margin-top: 1rem;
+}
+.service-card {
+  border: 1px solid #e2e8f0; border-radius: 12px; padding: 2rem;
+  transition: box-shadow 0.2s;
+}
+.service-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+.service-card h3 { font-size: 1.2rem; margin-bottom: 0.5rem; }
+.service-card .price { font-size: 1.8rem; font-weight: 700; color: #2563eb; margin-bottom: 1rem; }
+.service-card ul { list-style: none; }
+.service-card ul li { padding: 0.3rem 0; color: #475569; }
+.service-card ul li::before { content: "✓ "; color: #22c55e; font-weight: 700; }
+.featured { border-color: #2563eb; background: #f8faff; }
+
+/* About */
+.about-section { background: #f8fafc; }
+.about-inner { max-width: 1000px; margin: 0 auto; padding: 4rem 2rem; }
+.about-inner p { color: #475569; font-size: 1.05rem; max-width: 700px; }
+
+/* Contact */
+.contact-section { text-align: center; }
+.contact-section p { color: #475569; font-size: 1.05rem; margin-bottom: 2rem; }
+.contact-info { font-size: 1.1rem; }
+.contact-info a { font-weight: 600; }
+
+/* Footer */
+footer {
+  text-align: center; padding: 2rem; color: #94a3b8; font-size: 0.85rem;
+  border-top: 1px solid #e2e8f0;
+}
+
+@media (max-width: 600px) {
+  .hero h1 { font-size: 1.8rem; }
+  nav .nav-links a { margin-left: 1rem; font-size: 0.85rem; }
+}
