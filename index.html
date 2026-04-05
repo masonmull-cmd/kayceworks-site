@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kayce Works — Marine Detailing in Austin, TX</title>
+  <meta name="description" content="Professional mobile boat and jet ski detailing in Austin, TX. Lake Travis, Lake Austin, Canyon Lake. We come to you.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Inter', sans-serif; color: #1a1a1a; line-height: 1.6; }
+    a { color: #0ea5e9; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    img { max-width: 100%; display: block; }
+    .nav-wrap { background: #fff; border-bottom: 1px solid #e2e8f0; position: sticky; top: 0; z-index: 100; }
+    nav { display: flex; justify-content: space-between; align-items: center; max-width: 1100px; margin: 0 auto; padding: 1rem 2rem; }
+    .logo { font-size: 1.5rem; font-weight: 800; color: #0c4a6e; letter-spacing: -0.5px; }
+    .logo span { color: #0ea5e9; }
+    .nav-links { display: flex; align-items: center; gap: 1.5rem; }
+    .nav-links a { color: #475569; font-size: 0.9rem; font-weight: 500; }
+    .nav-links a:hover { color: #0ea5e9; text-decoration: none; }
+    .nav-cta { background: #0ea5e9; color: #fff !important; padding: 0.5rem 1.25rem; border-radius: 6px; font-weight: 600; font-size: 0.9rem; }
+    .nav-cta:hover { background: #0284c7; }
+    .hero { text-align: center; padding: 6rem 2rem 5rem; background: linear-gradient(160deg, #0c4a6e 0%, #075985 40%, #0ea5e9 100%); color: #fff; position: relative; overflow: hidden; }
+    .hero::after { content: ''; position: absolute; bottom: -2px; left: 0; right: 0; height: 80px; background: linear-gradient(to top, #fff, transparent); }
+    .hero-badge { display: inline-block; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25); border-radius: 20px; padding: 0.35rem 1rem; font-size: 0.85rem; color: #bae6fd; margin-bottom: 1.5rem; }
+    .hero h1 { font-size: 3rem; font-weight: 800; margin-bottom: 1rem; letter-spacing: -1px; }
+    .hero p { font-size: 1.2rem; color: #bae6fd; max-width: 550px; margin: 0 auto 2.5rem; }
+    .hero-btns { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+    .btn-white { display: inline-block; padding: 0.9rem 2rem; background: #fff; color: #0369a1; border-radius: 8px; font-size: 1rem; font-weight: 700; }
+    .btn-white:hover { background: #e0f2fe; text-decoration: none; }
+    .btn-outline { display: inline-block; padding: 0.9rem 2rem; background: transparent; border: 2px solid rgba(255,255,255,0.4); color: #fff; border-radius: 8px; font-size: 1rem; font-weight: 600; }
+    .btn-outline:hover { border-color: #fff; background: rgba(255,255,255,0.1); text-decoration: none; }
+    .trust-bar { display: flex; justify-content: center; gap: 3rem; flex-wrap: wrap; padding: 2rem; color: #64748b; font-size: 0.9rem; font-weight: 500; }
+    .trust-item { display: flex; align-items: center; gap: 0.5rem; }
+    .trust-icon { font-size: 1.3rem; }
+    .section { max-width: 1100px; margin: 0 auto; padding: 5rem 2rem; }
+    .section h2 { font-size: 2rem; font-weight: 800; margin-bottom: 0.5rem; color: #0f172a; }
+    .section .subtitle { color: #64748b; font-size: 1.05rem; margin-bottom: 2.5rem; }
+    .section-alt { background: #f8fafc; }
+    .services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; }
+    .s-card { border: 1px solid #e2e8f0; border-radius: 16px; padding: 2.5rem 2rem; background: #fff; position: relative; }
+    .s-card:hover { box-shadow: 0 8px 24px rgba(0,0,0,0.08); transform: translateY(-2px); }
+    .s-card.popular { border-color: #0ea5e9; }
+    .s-card.popular::before { content: 'Most Popular'; position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: #0ea5e9; color: #fff; font-size: 0.75rem; font-weight: 700; padding: 0.25rem 1rem; border-radius: 12px; text-transform: uppercase; }
+    .s-card h3 { font-size: 1.25rem; font-weight: 700; margin-bottom: 0.25rem; }
+    .s-card .s-price { font-size: 2rem; font-weight: 800; color: #0ea5e9; margin-bottom: 1.25rem; }
+    .s-card .s-price span { font-size: 0.9rem; font-weight: 400; color: #94a3b8; }
+    .s-card ul { list-style: none; margin-bottom: 1.5rem; }
+    .s-card ul li { padding: 0.4rem 0; color: #475569; font-size: 0.95rem; }
+    .s-card ul li::before { content: "✓ "; color: #22c55e; font-weight: 700; }
+    .s-card .s-btn { display: block; text-align: center; padding: 0.75rem; border-radius: 8px; font-weight: 600; font-size: 0.95rem; }
+    .s-btn-outline { border: 2px solid #e2e8f0; color: #0f172a; }
+    .s-btn-outline:hover { border-color: #0ea5e9; color: #0ea5e9; text-decoration: none; }
+    .s-btn-fill { background: #0ea5e9; color: #fff; }
+    .s-btn-fill:hover { background: #0284c7; text-decoration: none; }
+    .steps-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 2rem; }
+    .step { text-align: center; }
+    .step-num { display: inline-flex; align-items: center; justify-content: center; width: 48px; height: 48px; border-radius: 50%; background: #f0f9ff; color: #0ea5e9; font-weight: 800; font-size: 1.2rem; margin-bottom: 1rem; border: 2px solid #bae6fd; }
+    .step h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem; }
+    .step p { color: #64748b; font-size: 0.95rem; }
+    .gallery-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; }
+    .gallery-card { border-radius: 16px; overflow: hidden; background: #e2e8f0; height: 220px; display: flex; align-items: center; justify-content: center; color: #94a3b8; font-size: 0.95rem; font-weight: 500; position: relative; }
+    .gallery-card .badge { position: absolute; top: 12px; left: 12px; background: rgba(0,0,0,0.6); color: #fff; font-size: 0.75rem; font-weight: 600; padding: 0.2rem 0.75rem; border-radius: 4px; text-transform: uppercase; }
+    .areas-section { text-align: center; }
+    .area-tags { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.75rem; margin-top: 1.5rem; }
+    .tag { background: #f0f9ff; border: 1px solid #bae6fd; border-radius: 24px; padding: 0.6rem 1.5rem; color: #0369a1; font-size: 0.9rem; font-weight: 500; }
+    .testimonial-box { max-width: 600px; margin: 0 auto; text-align: center; background: #fff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 3rem 2rem; }
+    .testimonial-box .stars { font-size: 1.3rem; margin-bottom: 1rem; }
+    .testimonial-box blockquote { font-size: 1.1rem; color: #334155; font-style: italic; margin-bottom: 1rem; }
+    .testimonial-box .author { color: #94a3b8; font-size: 0.9rem; }
+    .cta-section { text-align: center; padding: 5rem 2rem; background: linear-gradient(160deg, #0c4a6e 0%, #0ea5e9 100%); color: #fff; }
+    .cta-section h2 { color: #fff; font-size: 2rem; font-weight: 800; margin-bottom: 1rem; }
+    .cta-section p { color: #bae6fd; font-size: 1.1rem; margin-bottom: 2rem; max-width: 500px; margin-left: auto; margin-right: auto; }
+    .contact-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; }
+    .contact-card { text-align: center; padding: 2rem; border: 1px solid #e2e8f0; border-radius: 16px; background: #fff; }
+    .contact-card .c-icon { font-size: 2rem; margin-bottom: 0.75rem; }
+    .contact-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 0.5rem; }
+    .contact-card p { color: #64748b; font-size: 0.95rem; }
+    .contact-card a { font-weight: 600; }
+    footer { text-align: center; padding: 2.5rem 2rem; color: #94a3b8; font-size: 0.85rem; border-top: 1px solid #e2e8f0; }
+    footer .social-links { margin-bottom: 1rem; }
+    footer .social-links a { display: inline-block; margin: 0 0.5rem; color: #64748b; font-size: 0.9rem; font-weight: 500; }
+    footer .social-links a:hover { color: #0ea5e9; }
+    @media (max-width: 600px) { .hero h1 { font-size: 2rem; } .hero p { font-size: 1rem; } nav .nav-links { gap: 0.75rem; } nav .nav-links a { font-size: 0.8rem; } .trust-bar { gap: 1.5rem; } }
+  </style>
+</head>
+<body>
+  <div class="nav-wrap">
+    <nav>
+      <div class="logo">KAYCE<span>WORKS</span></div>
+      <div class="nav-links">
+        <a href="#services">Services</a>
+        <a href="#work">Gallery</a>
+        <a href="#areas">Areas</a>
+        <a href="#contact">Contact</a>
+        <a href="#contact" class="nav-cta">Free Quote</a>
+      </div>
+    </nav>
+  </div>
+  <section class="hero">
+    <div class="hero-badge">⚓ Mobile Marine Detailing · Austin, TX</div>
+    <h1>Your Boat Deserves<br>Better Than a Car Wash</h1>
+    <p>Professional detailing for boats and jet skis. We come to your marina, dock, or driveway.</p>
+    <div class="hero-btns">
+      <a href="#contact" class="btn-white">Get a Free Quote</a>
+      <a href="#services" class="btn-outline">View Services</a>
+    </div>
+  </section>
+  <div class="trust-bar">
+    <div class="trust-item"><span class="trust-icon">🛥️</span> Boats &amp; Jet Skis</div>
+    <div class="trust-item"><span class="trust-icon">🚚</span> Mobile — We Come to You</div>
+    <div class="trust-item"><span class="trust-icon">⭐</span> Satisfaction Guaranteed</div>
+    <div class="trust-item"><span class="trust-icon">💰</span> Free Estimates</div>
+  </div>
+  <div class="section-alt">
+    <div class="section" id="services">
+      <h2>Services</h2>
+      <p class="subtitle">From a quick wash to full restoration. Every job done by hand.</p>
+      <div class="services-grid">
+        <div class="s-card">
+          <h3>Wash &amp; Wipe Down</h3>
+          <div class="s-price">$150+ <span>/ starting</span></div>
+          <ul>
+            <li>Full exterior hand wash</li>
+            <li>Interior wipe down &amp; vacuum</li>
+            <li>Vinyl &amp; cushion cleaning</li>
+            <li>Glass &amp; chrome polished</li>
+            <li>Rinse &amp; dry</li>
+          </ul>
+          <a href="#contact" class="s-btn s-btn-outline">Get Quote</a>
+        </div>
+        <div class="s-card popular">
+          <h3>Full Detail</h3>
+          <div class="s-price">$350+ <span>/ starting</span></div>
+          <ul>
+            <li>Everything in Wash &amp; Wipe</li>
+            <li>Oxidation removal</li>
+            <li>Compound &amp; polish</li>
+            <li>Vinyl restoration &amp; UV protect</li>
+            <li>Metal &amp; hardware polishing</li>
+            <li>Gel coat restoration</li>
+          </ul>
+          <a href="#contact" class="s-btn s-btn-fill">Get Quote</a>
+        </div>
+        <div class="s-card">
+          <h3>Ceramic Coating</h3>
+          <div class="s-price">$800+ <span>/ starting</span></div>
+          <ul>
+            <li>Full detail included</li>
+            <li>Marine-grade ceramic coat</li>
+            <li>UV &amp; salt water protection</li>
+            <li>Hydrophobic finish</li>
+            <li>Lasts 1–2 years</li>
+            <li>Easier cleaning year-round</li>
+          </ul>
+          <a href="#contact" class="s-btn s-btn-outline">Get Quote</a>
+        </div>
+      </div>
+      <p style="text-align:center;margin-top:2rem;color:#64748b;font-size:0.95rem;">Jet ski detailing starting at $75 · Pricing varies by size &amp; condition</p>
+    </div>
+  </div>
+  <div class="section">
+    <h2>How It Works</h2>
+    <p class="subtitle">Three steps. Zero hassle.</p>
+    <div class="steps-grid">
+      <div class="step">
+        <div class="step-num">1</div>
+        <h3>Send Us Your Details</h3>
+        <p>Email or text us your boat type, size, condition, and location. Photos help.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <h3>Get a Quote</h3>
+        <p>We'll send you a clear price same day. No hidden fees, no surprises.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <h3>We Show Up &amp; Detail</h3>
+        <p>We come to you with everything we need. You come back to a clean boat.</p>
+      </div>
+    </div>
+  </div>
+<div class="section-alt">
+    <div class="section" id="work">
+      <h2>Our Work</h2>
+      <p class="subtitle">Before &amp; after shots coming soon. Stay tuned.</p>
+      <div class="gallery-grid">
+        <div class="gallery-card"><div class="badge">Before &amp; After</div>🛥️ Boat Detail — Photo Coming Soon</div>
+        <div class="gallery-card"><div class="badge">Before &amp; After</div>🏍️ Jet Ski Detail — Photo Coming Soon</div>
+        <div class="gallery-card"><div class="badge">Before &amp; After</div>✨ Ceramic Coating — Photo Coming Soon</div>
+      </div>
+    </div>
+  </div>
+  <div class="section">
+    <h2>What Clients Say</h2>
+    <p class="subtitle">Real reviews from real boat owners.</p>
+    <div class="testimonial-box">
+      <div class="stars">⭐⭐⭐⭐⭐</div>
+      <blockquote>"First review coming soon — be our first happy customer!"</blockquote>
+      <div class="author">— Your name here</div>
+    </div>
+  </div>
+  <div class="section-alt">
+    <div class="section areas-section" id="areas">
+      <h2>Service Areas</h2>
+      <p class="subtitle">We come to you — marinas, docks, driveways, and storage lots across the Austin area.</p>
+      <div class="area-tags">
+        <span class="tag">Lake Travis</span>
+        <span class="tag">Lake Austin</span>
+        <span class="tag">Canyon Lake</span>
+        <span class="tag">Lakeway</span>
+        <span class="tag">Lago Vista</span>
+        <span class="tag">Marble Falls</span>
+        <span class="tag">Volente</span>
+        <span class="tag">Spicewood</span>
+        <span class="tag">Cedar Park</span>
+        <span class="tag">Round Rock</span>
+        <span class="tag">Georgetown</span>
+      </div>
+    </div>
+  </div>
+  <div class="cta-section">
+    <h2>Ready to Get Your Boat Looking New?</h2>
+    <p>Send us your details and we'll have a quote to you same day. First-time customers get 20% off.</p>
+    <a href="#contact" class="btn-white">Get Your Free Quote</a>
+  </div>
+  <div class="section" id="contact">
+    <h2>Contact Us</h2>
+    <p class="subtitle">Reach out however works best for you. We respond same day.</p>
+    <div class="contact-grid">
+      <div class="contact-card">
+        <div class="c-icon">📧</div>
+        <h3>Email</h3>
+        <p><a href="mailto:mason.mull@kayceworks.com">mason.mull@kayceworks.com</a></p>
+      </div>
+      <div class="contact-card">
+        <div class="c-icon">📍</div>
+        <h3>Location</h3>
+        <p>Austin, TX &amp; surrounding lakes</p>
+      </div>
+      <div class="contact-card">
+        <div class="c-icon">⏰</div>
+        <h3>Hours</h3>
+        <p>Mon–Sat: 7am – 6pm<br>Sun: By appointment</p>
+      </div>
+    </div>
+  </div>
+  <footer>
+    <div class="social-links">
+      <a href="#">Instagram</a>
+      <a href="#">Facebook</a>
+      <a href="#">Google</a>
+    </div>
+    <p>&copy; 2026 Kayce Works. Austin, TX. All rights reserved.</p>
+  </footer>
+</body>
+</html>
