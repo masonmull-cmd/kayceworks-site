@@ -4,489 +4,338 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>P&L Journal</title>
-
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
   <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: Inter, Arial, sans-serif;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: Inter, Arial, sans-serif; }
+    body { background:#0f1420; color:#dce6f2; min-height:100vh; overflow:hidden; }
+    .app { display:grid; grid-template-columns:52px 190px 1fr; height:100vh; }
 
-    body {
-      background: #0b0f14;
-      color: #f4f7fb;
-      min-height: 100vh;
-      padding: 24px;
-    }
+    .iconbar { background:#141b2a; border-right:1px solid #20293a; display:flex; flex-direction:column; align-items:center; padding:10px 0; gap:18px; color:#7f8da3; }
+    .logo { width:28px; height:28px; background:linear-gradient(135deg,#16d6b3,#426cff); border-radius:8px; }
+    .icon { font-size:18px; opacity:.8; }
 
-    .container {
-      max-width: 1200px;
-      margin: auto;
-    }
+    .sidebar { background:#101722; border-right:1px solid #20293a; padding:18px 12px; overflow:auto; }
+    .section-title { color:#dce6f2; font-size:13px; font-weight:800; margin:18px 10px 8px; display:flex; justify-content:space-between; }
+    .nav-item { color:#8d99aa; padding:8px 12px; border-radius:3px; font-size:14px; margin:2px 0; }
+    .nav-item.active { background:#263b65; color:#dce6f2; }
 
-    header {
-      display: flex;
-      justify-content: space-between;
-      gap: 16px;
-      align-items: center;
-      margin-bottom: 28px;
-    }
+    .main { display:grid; grid-template-rows:44px 1fr; overflow:hidden; }
+    .topbar { background:#171d2b; border-bottom:1px solid #20293a; display:flex; align-items:center; justify-content:space-between; padding:0 12px; gap:10px; }
+    .filters { display:flex; gap:8px; align-items:center; overflow:auto; }
+    .filter { background:#222b42; color:#dbe4f0; border:1px solid #303a52; padding:7px 12px; border-radius:4px; font-size:13px; white-space:nowrap; }
+    .add-btn { background:#03b59f; color:white; border:none; padding:9px 16px; border-radius:4px; font-weight:800; cursor:pointer; }
 
-    h1 {
-      font-size: 34px;
-      letter-spacing: -1px;
-    }
+    .calendar-page { padding:8px; overflow:auto; }
+    .calendar-head { height:46px; background:#171d2b; display:flex; align-items:center; gap:18px; padding:0 12px; border:1px solid #20293a; margin-bottom:6px; }
+    .today { background:#111827; color:#dce6f2; border:1px solid #c7d2e0; padding:8px 28px; border-radius:2px; font-weight:700; }
+    .month-title { font-size:24px; font-weight:800; }
+    .month-total { color:#00c6c2; margin-left:4px; }
 
-    .sub {
-      color: #8d99a8;
-      margin-top: 6px;
-    }
+    .calendar { display:grid; grid-template-columns:repeat(7, minmax(145px, 1fr)) 105px; grid-auto-rows:160px; gap:3px; }
+    .day { background:#171d2b; border:1px solid #111827; padding:10px; position:relative; cursor:pointer; overflow:hidden; }
+    .day:hover { outline:1px solid #4b5d7a; }
+    .day.win { background:#087d74; }
+    .day.loss { background:#b64b6c; }
+    .day-num { text-align:center; color:#cbd5e1; font-size:13px; margin-bottom:24px; }
+    .day-info { font-size:14px; line-height:1.45; }
+    .pnl { font-weight:800; }
+    .tags { display:flex; flex-wrap:wrap; gap:4px; margin-top:6px; }
+    .tag { background:#15d1bd; color:white; padding:2px 5px; border-radius:3px; font-size:10px; font-weight:800; }
+    .muted { opacity:.55; }
+    .week-total { background:#171d2b; padding:12px 8px; border:1px solid #111827; color:#dce6f2; font-size:14px; }
+    .week-total .green { color:#00c6c2; }
+    .week-total .red { color:#ff6b8a; }
 
-    .pill {
-      background: #101923;
-      border: 1px solid #1f2c3a;
-      color: #9fb4c8;
-      padding: 10px 14px;
-      border-radius: 999px;
-      font-size: 14px;
-    }
+    .modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,.65); align-items:center; justify-content:center; z-index:10; }
+    .modal.show { display:flex; }
+    .modal-card { width:min(560px, 94vw); background:#151d2c; border:1px solid #303a52; border-radius:10px; padding:20px; box-shadow:0 25px 80px rgba(0,0,0,.5); }
+    .modal-head { display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; }
+    .close { background:none; border:none; color:#dce6f2; font-size:22px; cursor:pointer; }
+    .form { display:grid; gap:10px; }
+    .row { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+    input, select { background:#0f1420; border:1px solid #303a52; color:#dce6f2; padding:11px; border-radius:6px; width:100%; }
+    .save { background:#03b59f; color:white; border:none; padding:12px; border-radius:6px; font-weight:800; cursor:pointer; }
 
-    .stats {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 14px;
-      margin-bottom: 22px;
-    }
+    .trade-list { margin-top:16px; max-height:180px; overflow:auto; border-top:1px solid #303a52; padding-top:10px; }
+    .trade-line { display:flex; justify-content:space-between; gap:8px; padding:7px 0; border-bottom:1px solid #243046; font-size:13px; }
+    .delete { background:#ff4f6d; border:none; color:white; border-radius:4px; padding:4px 7px; cursor:pointer; }
 
-    .card {
-      background: #101923;
-      border: 1px solid #1f2c3a;
-      border-radius: 18px;
-      padding: 18px;
-      box-shadow: 0 10px 30px rgba(0,0,0,.25);
-    }
-
-    .label {
-      color: #8d99a8;
-      font-size: 14px;
-      margin-bottom: 8px;
-    }
-
-    .value {
-      font-size: 28px;
-      font-weight: 800;
-    }
-
-    .green { color: #28d17c; }
-    .red { color: #ff5c6c; }
-
-    .grid {
-      display: grid;
-      grid-template-columns: 1fr 1.4fr;
-      gap: 18px;
-      margin-bottom: 22px;
-    }
-
-    input, select, button {
-      width: 100%;
-      padding: 12px;
-      border-radius: 12px;
-      border: 1px solid #263548;
-      background: #0b1119;
-      color: white;
-      outline: none;
-    }
-
-    input::placeholder {
-      color: #5f6d7d;
-    }
-
-    button {
-      cursor: pointer;
-      background: #28d17c;
-      color: #041009;
-      font-weight: 800;
-      border: none;
-      transition: .2s;
-    }
-
-    button:hover {
-      transform: translateY(-1px);
-      opacity: .9;
-    }
-
-    .danger {
-      background: #ff5c6c;
-      color: white;
-    }
-
-    .form {
-      display: grid;
-      gap: 10px;
-    }
-
-    .row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      overflow: hidden;
-    }
-
-    th, td {
-      text-align: left;
-      padding: 13px;
-      border-bottom: 1px solid #1f2c3a;
-      font-size: 14px;
-    }
-
-    th {
-      color: #8d99a8;
-      font-weight: 600;
-    }
-
-    .table-wrap {
-      overflow-x: auto;
-    }
-
-    canvas {
-      max-height: 310px;
-    }
-
-    .actions {
-      display: flex;
-      gap: 10px;
-      margin-top: 12px;
-    }
-
-    .small {
-      font-size: 13px;
-      color: #8d99a8;
-      margin-top: 8px;
-      line-height: 1.5;
-    }
-
-    @media (max-width: 850px) {
-      .stats, .grid {
-        grid-template-columns: 1fr;
-      }
-
-      header {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-
-      h1 {
-        font-size: 28px;
-      }
+    @media(max-width:900px){
+      body { overflow:auto; }
+      .app { grid-template-columns:1fr; height:auto; }
+      .iconbar,.sidebar { display:none; }
+      .main { display:block; }
+      .calendar { grid-template-columns:1fr; grid-auto-rows:150px; }
+      .week-total { display:none; }
     }
   </style>
 </head>
-
 <body>
-  <div class="container">
-    <header>
-      <div>
-        <h1>Trading P&L Journal</h1>
-        <p class="sub">Track your Robinhood trades, profits, losses, win rate, and notes.</p>
-      </div>
-      <div class="pill">Saved locally in your browser</div>
-    </header>
+  <div class="app">
+    <aside class="iconbar">
+      <div class="logo"></div>
+      <div class="icon">▦</div><div class="icon">◔</div><div class="icon">▤</div><div class="icon">↔</div>
+      <div class="icon">◎</div><div class="icon" style="margin-top:auto;">⚙</div>
+    </aside>
 
-    <section class="stats">
-      <div class="card">
-        <div class="label">Total P&L</div>
-        <div id="totalPnl" class="value">$0.00</div>
-      </div>
-      <div class="card">
-        <div class="label">Win Rate</div>
-        <div id="winRate" class="value">0%</div>
-      </div>
-      <div class="card">
-        <div class="label">Total Trades</div>
-        <div id="totalTrades" class="value">0</div>
-      </div>
-      <div class="card">
-        <div class="label">Best Trade</div>
-        <div id="bestTrade" class="value">$0.00</div>
-      </div>
-    </section>
+    <aside class="sidebar">
+      <div class="section-title">PERFORMANCE <span>⌄</span></div>
+      <div class="nav-item">Overview</div>
+      <div class="nav-item active">Calendar</div>
+      <div class="nav-item">Snapshot</div>
+      <div class="nav-item">Evaluator</div>
+      <div class="nav-item">Simulator</div>
+      <div class="nav-item">Drawdown</div>
 
-    <section class="grid">
-      <div class="card">
-        <h2>Add Trade</h2>
-        <p class="small">Enter completed trades for now. Later you can upgrade this to parse Robinhood CSV exports.</p>
+      <div class="section-title">TRADE <span>⌄</span></div>
+      <div class="nav-item">Hourly</div>
+      <div class="nav-item">Weekday</div>
+      <div class="nav-item">Month</div>
+      <div class="nav-item">Year</div>
+      <div class="nav-item">Entry Price</div>
+      <div class="nav-item">Volume</div>
+      <div class="nav-item">Side</div>
+      <div class="nav-item">Hold Time</div>
 
-        <form id="tradeForm" class="form">
-          <div class="row">
-            <input id="date" type="date" required />
-            <input id="ticker" type="text" placeholder="Ticker, ex: PLTR" required />
-          </div>
+      <div class="section-title">TAGS <span>⌄</span></div>
+      <div class="nav-item">Setups</div>
+      <div class="nav-item">Mistakes</div>
+    </aside>
 
-          <div class="row">
-            <select id="type">
-              <option value="Stock">Stock</option>
-              <option value="Option">Option</option>
-              <option value="Crypto">Crypto</option>
-            </select>
-
-            <select id="side">
-              <option value="Long">Long</option>
-              <option value="Short">Short</option>
-            </select>
-          </div>
-
-          <div class="row">
-            <input id="entry" type="number" step="0.01" placeholder="Entry price" required />
-            <input id="exit" type="number" step="0.01" placeholder="Exit price" required />
-          </div>
-
-          <div class="row">
-            <input id="quantity" type="number" step="0.01" placeholder="Shares / contracts" required />
-            <input id="fees" type="number" step="0.01" placeholder="Fees, optional" value="0" />
-          </div>
-
-          <input id="notes" type="text" placeholder="Notes, setup, mistake, emotion, etc." />
-
-          <button type="submit">Add Trade</button>
-        </form>
-
-        <div class="actions">
-          <button onclick="exportCSV()">Export CSV</button>
-          <button class="danger" onclick="clearTrades()">Clear All</button>
+    <main class="main">
+      <div class="topbar">
+        <div class="filters">
+          <div class="filter">Symbol⌄</div>
+          <div class="filter">Setup⌄</div>
+          <div class="filter">Side⌄</div>
+          <div class="filter">Mistake⌄</div>
+          <div class="filter">Status⌄</div>
+          <div class="filter">Portfolio⌄</div>
+          <div class="filter">Date⌄</div>
+          <div class="filter">Custom Tags⌄</div>
+          <div class="filter">More...</div>
         </div>
+        <button class="add-btn" onclick="openModal()">Add Trade</button>
       </div>
 
-      <div class="card">
-        <h2>P&L Curve</h2>
-        <canvas id="pnlChart"></canvas>
-      </div>
-    </section>
+      <section class="calendar-page">
+        <div class="calendar-head">
+          <button class="today" onclick="goToday()">Today</button>
+          <button class="filter" onclick="changeMonth(-1)">‹</button>
+          <button class="filter" onclick="changeMonth(1)">›</button>
+          <div class="month-title" id="monthTitle"></div>
+          <div class="month-total" id="monthTotal"></div>
+        </div>
 
-    <section class="card">
-      <h2>Trade History</h2>
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Ticker</th>
-              <th>Type</th>
-              <th>Entry</th>
-              <th>Exit</th>
-              <th>Qty</th>
-              <th>P&L</th>
-              <th>Notes</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody id="tradeTable"></tbody>
-        </table>
+        <div class="calendar" id="calendar"></div>
+      </section>
+    </main>
+  </div>
+
+  <div class="modal" id="modal">
+    <div class="modal-card">
+      <div class="modal-head">
+        <h2 id="modalTitle">Add Trade</h2>
+        <button class="close" onclick="closeModal()">×</button>
       </div>
-    </section>
+
+      <form class="form" id="tradeForm">
+        <div class="row">
+          <input type="date" id="date" required />
+          <input type="text" id="symbol" placeholder="Symbol ex: PLTR" required />
+        </div>
+        <div class="row">
+          <input type="number" step="0.01" id="pnl" placeholder="P&L ex: 275.72" required />
+          <input type="number" id="count" placeholder="Trades count" value="1" required />
+        </div>
+        <div class="row">
+          <select id="setup">
+            <option>Breakout</option>
+            <option>FOMO</option>
+            <option>Reversal</option>
+            <option>RSI Crossed</option>
+            <option>VWAP</option>
+            <option>Breakdown</option>
+          </select>
+          <select id="status">
+            <option>Closed</option>
+            <option>Runner</option>
+            <option>Breakeven</option>
+          </select>
+        </div>
+        <input type="text" id="notes" placeholder="Notes / mistake / reason" />
+        <button class="save" type="submit">Save Trade</button>
+      </form>
+
+      <div class="trade-list" id="tradeList"></div>
+    </div>
   </div>
 
   <script>
-    let trades = JSON.parse(localStorage.getItem("trades")) || [];
-    let chart;
+    let trades = JSON.parse(localStorage.getItem("plTrades")) || [];
+    let viewDate = new Date();
+    let selectedDate = null;
 
-    document.getElementById("date").valueAsDate = new Date();
+    const monthNames = [
+      "January","February","March","April","May","June",
+      "July","August","September","October","November","December"
+    ];
 
-    document.getElementById("tradeForm").addEventListener("submit", function(e) {
+    function save() {
+      localStorage.setItem("plTrades", JSON.stringify(trades));
+    }
+
+    function money(n) {
+      const sign = n < 0 ? "-" : "";
+      return sign + "$" + Math.abs(n).toLocaleString(undefined, {
+        minimumFractionDigits: n % 1 ? 2 : 0,
+        maximumFractionDigits: 2
+      });
+    }
+
+    function dateKey(d) {
+      const year = d.getFullYear();
+      const month = String(d.getMonth() + 1).padStart(2, "0");
+      const day = String(d.getDate()).padStart(2, "0");
+      return `${year}-${month}-${day}`;
+    }
+
+    function renderCalendar() {
+      const cal = document.getElementById("calendar");
+      cal.innerHTML = "";
+
+      const year = viewDate.getFullYear();
+      const month = viewDate.getMonth();
+
+      document.getElementById("monthTitle").textContent = `${monthNames[month]} ${year}`;
+
+      const monthTrades = trades.filter(t => {
+        const d = new Date(t.date + "T00:00:00");
+        return d.getMonth() === month && d.getFullYear() === year;
+      });
+
+      const monthPnl = monthTrades.reduce((s,t) => s + Number(t.pnl), 0);
+      document.getElementById("monthTotal").textContent = money(monthPnl);
+
+      const first = new Date(year, month, 1);
+      const start = new Date(first);
+      start.setDate(start.getDate() - first.getDay());
+
+      for (let week = 0; week < 6; week++) {
+        let weekPnl = 0;
+        let weekCount = 0;
+
+        for (let i = 0; i < 7; i++) {
+          const d = new Date(start);
+          d.setDate(start.getDate() + week * 7 + i);
+          const key = dateKey(d);
+          const dayTrades = trades.filter(t => t.date === key);
+          const pnl = dayTrades.reduce((s,t) => s + Number(t.pnl), 0);
+          const count = dayTrades.reduce((s,t) => s + Number(t.count || 1), 0);
+          weekPnl += pnl;
+          weekCount += count;
+
+          const div = document.createElement("div");
+          div.className = "day " + (pnl > 0 ? "win" : pnl < 0 ? "loss" : "") + (d.getMonth() !== month ? " muted" : "");
+          div.onclick = () => openModal(key);
+
+          const tags = [...new Set(dayTrades.map(t => t.setup).filter(Boolean))].slice(0, 3);
+
+          div.innerHTML = `
+            <div class="day-num">${d.getDate()}</div>
+            <div class="day-info">
+              ${dayTrades.length ? `<div class="pnl">${money(pnl)}</div><div>${count} Trades</div>` : ""}
+              <div class="tags">
+                ${tags.map(x => `<span class="tag">${x.toUpperCase()}</span>`).join("")}
+              </div>
+              ${dayTrades.length > 3 ? `<div>+${dayTrades.length - 3} more</div>` : ""}
+            </div>
+          `;
+          cal.appendChild(div);
+        }
+
+        const weekBox = document.createElement("div");
+        weekBox.className = "week-total";
+        weekBox.innerHTML = `
+          <div class="${weekPnl >= 0 ? "green" : "red"}">${money(weekPnl)}</div>
+          <div>${weekCount} Trades</div>
+        `;
+        cal.appendChild(weekBox);
+      }
+    }
+
+    function openModal(day) {
+      selectedDate = day || dateKey(new Date());
+      document.getElementById("date").value = selectedDate;
+      document.getElementById("modalTitle").textContent = "Add Trade - " + selectedDate;
+      document.getElementById("modal").classList.add("show");
+      renderTradeList();
+    }
+
+    function closeModal() {
+      document.getElementById("modal").classList.remove("show");
+    }
+
+    function renderTradeList() {
+      const list = document.getElementById("tradeList");
+      const dayTrades = trades.filter(t => t.date === selectedDate);
+
+      list.innerHTML = dayTrades.length
+        ? dayTrades.map(t => `
+            <div class="trade-line">
+              <div>
+                <strong>${t.symbol}</strong> — ${money(Number(t.pnl))} — ${t.setup}
+                <br><span style="color:#8d99aa">${t.notes || ""}</span>
+              </div>
+              <button class="delete" onclick="deleteTrade(${t.id})">X</button>
+            </div>
+          `).join("")
+        : `<div style="color:#8d99aa">No trades for this day yet.</div>`;
+    }
+
+    document.getElementById("tradeForm").addEventListener("submit", e => {
       e.preventDefault();
 
       const trade = {
         id: Date.now(),
-        date: date.value,
-        ticker: ticker.value.toUpperCase(),
-        type: type.value,
-        side: side.value,
-        entry: parseFloat(entry.value),
-        exit: parseFloat(exit.value),
-        quantity: parseFloat(quantity.value),
-        fees: parseFloat(fees.value || 0),
-        notes: notes.value
+        date: document.getElementById("date").value,
+        symbol: document.getElementById("symbol").value.toUpperCase(),
+        pnl: Number(document.getElementById("pnl").value),
+        count: Number(document.getElementById("count").value),
+        setup: document.getElementById("setup").value,
+        status: document.getElementById("status").value,
+        notes: document.getElementById("notes").value
       };
 
-      trade.pnl = calculatePnl(trade);
-
       trades.push(trade);
-      saveTrades();
-      this.reset();
-      document.getElementById("date").valueAsDate = new Date();
-      render();
+      save();
+
+      selectedDate = trade.date;
+      e.target.reset();
+      document.getElementById("date").value = selectedDate;
+      document.getElementById("count").value = 1;
+
+      renderCalendar();
+      renderTradeList();
     });
-
-    function calculatePnl(t) {
-      let pnl;
-
-      if (t.side === "Long") {
-        pnl = (t.exit - t.entry) * t.quantity;
-      } else {
-        pnl = (t.entry - t.exit) * t.quantity;
-      }
-
-      if (t.type === "Option") {
-        pnl *= 100;
-      }
-
-      return pnl - t.fees;
-    }
-
-    function saveTrades() {
-      localStorage.setItem("trades", JSON.stringify(trades));
-    }
-
-    function money(num) {
-      return num.toLocaleString("en-US", {
-        style: "currency",
-        currency: "USD"
-      });
-    }
-
-    function render() {
-      const tbody = document.getElementById("tradeTable");
-      tbody.innerHTML = "";
-
-      trades
-        .sort((a, b) => new Date(a.date) - new Date(b.date))
-        .forEach(t => {
-          const tr = document.createElement("tr");
-          tr.innerHTML = `
-            <td>${t.date}</td>
-            <td><strong>${t.ticker}</strong></td>
-            <td>${t.type}</td>
-            <td>${money(t.entry)}</td>
-            <td>${money(t.exit)}</td>
-            <td>${t.quantity}</td>
-            <td class="${t.pnl >= 0 ? "green" : "red"}"><strong>${money(t.pnl)}</strong></td>
-            <td>${t.notes || ""}</td>
-            <td><button class="danger" onclick="deleteTrade(${t.id})">X</button></td>
-          `;
-          tbody.appendChild(tr);
-        });
-
-      updateStats();
-      updateChart();
-    }
-
-    function updateStats() {
-      const total = trades.reduce((sum, t) => sum + t.pnl, 0);
-      const wins = trades.filter(t => t.pnl > 0).length;
-      const best = trades.length ? Math.max(...trades.map(t => t.pnl)) : 0;
-      const rate = trades.length ? Math.round((wins / trades.length) * 100) : 0;
-
-      totalPnl.textContent = money(total);
-      totalPnl.className = "value " + (total >= 0 ? "green" : "red");
-
-      winRate.textContent = rate + "%";
-      totalTrades.textContent = trades.length;
-      bestTrade.textContent = money(best);
-      bestTrade.className = "value " + (best >= 0 ? "green" : "red");
-    }
-
-    function updateChart() {
-      const labels = [];
-      const data = [];
-      let running = 0;
-
-      trades.forEach(t => {
-        running += t.pnl;
-        labels.push(t.date + " " + t.ticker);
-        data.push(running);
-      });
-
-      if (chart) chart.destroy();
-
-      chart = new Chart(document.getElementById("pnlChart"), {
-        type: "line",
-        data: {
-          labels,
-          datasets: [{
-            label: "Running P&L",
-            data,
-            borderWidth: 3,
-            tension: 0.35,
-            pointRadius: 4
-          }]
-        },
-        options: {
-          responsive: true,
-          plugins: {
-            legend: {
-              labels: { color: "#f4f7fb" }
-            }
-          },
-          scales: {
-            x: {
-              ticks: { color: "#8d99a8" },
-              grid: { color: "#1f2c3a" }
-            },
-            y: {
-              ticks: {
-                color: "#8d99a8",
-                callback: value => "$" + value
-              },
-              grid: { color: "#1f2c3a" }
-            }
-          }
-        }
-      });
-    }
 
     function deleteTrade(id) {
       trades = trades.filter(t => t.id !== id);
-      saveTrades();
-      render();
+      save();
+      renderCalendar();
+      renderTradeList();
     }
 
-    function clearTrades() {
-      if (!confirm("Delete all trades?")) return;
-      trades = [];
-      saveTrades();
-      render();
+    function changeMonth(n) {
+      viewDate.setMonth(viewDate.getMonth() + n);
+      renderCalendar();
     }
 
-    function exportCSV() {
-      if (!trades.length) {
-        alert("No trades to export.");
-        return;
-      }
-
-      const headers = ["Date", "Ticker", "Type", "Side", "Entry", "Exit", "Quantity", "Fees", "PnL", "Notes"];
-      const rows = trades.map(t => [
-        t.date,
-        t.ticker,
-        t.type,
-        t.side,
-        t.entry,
-        t.exit,
-        t.quantity,
-        t.fees,
-        t.pnl,
-        `"${(t.notes || "").replace(/"/g, '""')}"`
-      ]);
-
-      const csv = [headers, ...rows].map(row => row.join(",")).join("\n");
-      const blob = new Blob([csv], { type: "text/csv" });
-      const url = URL.createObjectURL(blob);
-
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "trading-journal.csv";
-      a.click();
-
-      URL.revokeObjectURL(url);
+    function goToday() {
+      viewDate = new Date();
+      renderCalendar();
     }
 
-    render();
+    renderCalendar();
   </script>
 </body>
 </html>
