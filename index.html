@@ -12,7 +12,6 @@
     h1{font-size:30px}
     .month-pnl{font-size:25px;font-weight:900;margin-top:6px}
     .green{color:#14d8a6}.red{color:#ff5f7e}
-    .btn{background:#14d8a6;color:#06110e;border:none;padding:12px 18px;border-radius:10px;font-weight:900;cursor:pointer}
     .dashboard{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px}
     .card{background:#171d2b;border:1px solid #252f45;border-radius:16px;padding:18px}
     .label{color:#8f9bad;font-size:14px;margin-bottom:8px}
@@ -77,10 +76,11 @@
     <table>
       <thead>
         <tr>
-          <th>Date</th>
+          <th>Exit Date</th>
           <th>Stock</th>
           <th>Contract</th>
           <th>Expires</th>
+          <th>Contracts</th>
           <th>Entry</th>
           <th>Exit</th>
           <th>P&L</th>
@@ -103,29 +103,39 @@
 
 <script>
 const trades = [
-  {date:"2025-04-27",stock:"GOOGL",contract:"$350 Call",expires:"2025-04-27",entry:168,exit:264},
-  {date:"2025-04-27",stock:"NVDA",contract:"$212.5 Call",expires:"2025-04-27",entry:40,exit:40},
-  {date:"2025-04-28",stock:"PYPL",contract:"$52 Call",expires:"2025-05-01",entry:110,exit:36},
-  {date:"2025-04-28",stock:"AAPL",contract:"$275 Call",expires:"2025-04-29",entry:366,exit:379},
-  {date:"2025-04-30",stock:"TSLA",contract:"$380 Call",expires:"2025-05-01",entry:525,exit:630},
-  {date:"2025-04-30",stock:"HPE",contract:"$30 Call",expires:"2025-05-15",entry:98,exit:122},
-  {date:"2025-05-01",stock:"MSFT",contract:"$420 Call",expires:"2025-05-01",entry:629,exit:112},
-  {date:"2025-05-04",stock:"AMZN",contract:"$275 Call",expires:"2025-05-04",entry:215,exit:715},
-  {date:"2025-05-06",stock:"NVDA",contract:"$207.5 Call",expires:"2025-05-06",entry:675,exit:1080},
-  {date:"2025-05-06",stock:"NVDA",contract:"$210 Call",expires:"2025-05-06",entry:90,exit:40},
-  {date:"2025-05-07",stock:"AAPL",contract:"$295 Call",expires:"2025-05-08",entry:1180,exit:629},
-  {date:"2025-05-07",stock:"APLD",contract:"$45 Call",expires:"2025-06-18",entry:470,exit:530},
-  {date:"2025-05-11",stock:"PLTR",contract:"$90 Call",expires:"2025-05-15",entry:200,exit:800},
-  {date:"2025-05-12",stock:"HL",contract:"$18.5 Put",expires:"2025-05-15",entry:45,exit:81}
-].map(t => ({...t, pnl:t.exit - t.entry, percent:((t.exit - t.entry) / t.entry) * 100}));
+  {exitDate:"2025-04-27",entryDate:"2025-04-27",stock:"GOOGL",contract:"$350 Call",expires:"2025-04-27",contracts:3,entryPrice:0.56,exitPrice:0.88},
+  {exitDate:"2025-04-27",entryDate:"2025-04-27",stock:"NVDA",contract:"$212.5 Call",expires:"2025-04-27",contracts:2,entryPrice:0.20,exitPrice:0.20},
+  {exitDate:"2025-04-28",entryDate:"2025-04-28",stock:"AAPL",contract:"$275 Call",expires:"2025-04-29",contracts:5,entryPrice:0.732,exitPrice:0.758},
+  {exitDate:"2025-04-29",entryDate:"2025-04-28",stock:"PYPL",contract:"$52 Call",expires:"2025-05-01",contracts:4,entryPrice:0.275,exitPrice:0.09},
+  {exitDate:"2025-04-30",entryDate:"2025-04-30",stock:"TSLA",contract:"$380 Call",expires:"2025-05-01",contracts:3,entryPrice:1.75,exitPrice:2.10},
+  {exitDate:"2025-05-01",entryDate:"2025-04-30",stock:"HPE",contract:"$30 Call",expires:"2025-05-15",contracts:2,entryPrice:0.49,exitPrice:0.61},
+  {exitDate:"2025-05-01",entryDate:"2025-05-01",stock:"MSFT",contract:"$420 Call",expires:"2025-05-01",contracts:8,entryPrice:0.78625,exitPrice:0.14},
+  {exitDate:"2025-05-04",entryDate:"2025-05-04",stock:"AMZN",contract:"$275 Call",expires:"2025-05-04",contracts:5,entryPrice:0.43,exitPrice:1.43},
+  {exitDate:"2025-05-06",entryDate:"2025-05-06",stock:"NVDA",contract:"$207.5 Call",expires:"2025-05-06",contracts:15,entryPrice:0.45,exitPrice:0.72},
+  {exitDate:"2025-05-06",entryDate:"2025-05-06",stock:"NVDA",contract:"$210 Call",expires:"2025-05-06",contracts:3,entryPrice:0.30,exitPrice:0.1333},
+  {exitDate:"2025-05-07",entryDate:"2025-05-07",stock:"AAPL",contract:"$295 Call",expires:"2025-05-08",contracts:17,entryPrice:0.6941,exitPrice:0.37},
+  {exitDate:"2025-05-11",entryDate:"2025-05-07",stock:"APLD",contract:"$45 Call",expires:"2025-06-18",contracts:1,entryPrice:4.70,exitPrice:5.30},
+  {exitDate:"2025-05-11",entryDate:"2025-05-07",stock:"PLTR",contract:"$90 Call",expires:"2025-05-15",contracts:8,entryPrice:0.25,exitPrice:1.00},
+  {exitDate:"2025-05-12",entryDate:"2025-05-11",stock:"HL",contract:"$18.5 Put",expires:"2025-05-15",contracts:3,entryPrice:0.15,exitPrice:0.27}
+].map(t => ({
+  ...t,
+  date: t.exitDate,
+  entry: t.entryPrice * t.contracts * 100,
+  exit: t.exitPrice * t.contracts * 100,
+  pnl: (t.exitPrice - t.entryPrice) * t.contracts * 100,
+  percent: ((t.exitPrice - t.entryPrice) / t.entryPrice) * 100
+}));
 
 let viewDate = new Date("2025-05-01");
 let selectedDate = null;
-
 const calendar = document.getElementById("calendar");
 
 function money(n){
   return n.toLocaleString("en-US",{style:"currency",currency:"USD"});
+}
+
+function price(n){
+  return "$" + n.toFixed(2);
 }
 
 function dateKey(d){
@@ -154,7 +164,6 @@ function renderStats(){
   const wins = monthTradesArr.filter(t=>t.pnl>0).length;
   const winRate = monthTradesArr.length ? Math.round((wins/monthTradesArr.length)*100) : 0;
 
-  totalPnl.textContent;
   document.getElementById("totalPnl").textContent = money(totalPnl);
   document.getElementById("totalPnl").className = "value " + (totalPnl >= 0 ? "green":"red");
 
@@ -216,13 +225,16 @@ function renderCalendar(){
 function renderTable(){
   document.getElementById("tradeTable").innerHTML = trades.map(t=>`
     <tr>
-      <td>${t.date}</td>
+      <td>${t.exitDate}</td>
       <td><strong>${t.stock}</strong></td>
       <td>${t.contract}</td>
       <td>${t.expires}</td>
-      <td>${money(t.entry)}</td>
-      <td>${money(t.exit)}</td>
-      <td class="${t.pnl>=0?"green":"red"}"><strong>${money(t.pnl)} / ${t.percent.toFixed(2)}%</strong></td>
+      <td>${t.contracts}</td>
+      <td>${price(t.entryPrice)} / ${money(t.entry)}</td>
+      <td>${price(t.exitPrice)} / ${money(t.exit)}</td>
+      <td class="${t.pnl>=0?"green":"red"}">
+        <strong>${money(t.pnl)} / ${t.percent.toFixed(2)}%</strong>
+      </td>
     </tr>
   `).join("");
 }
@@ -236,7 +248,9 @@ function openModal(date){
     <div class="trade">
       <strong>${t.stock} ${t.contract}</strong><br>
       Expires: ${t.expires}<br>
-      Entry: ${money(t.entry)} | Exit: ${money(t.exit)}<br>
+      Contracts: ${t.contracts}<br>
+      Entry: ${price(t.entryPrice)} / ${money(t.entry)}<br>
+      Exit: ${price(t.exitPrice)} / ${money(t.exit)}<br>
       P&L: <span class="${t.pnl>=0?"green":"red"}">${money(t.pnl)} / ${t.percent.toFixed(2)}%</span>
     </div>
   `).join("") : `<p style="color:#8f9bad;">No trades for this day.</p>`;
