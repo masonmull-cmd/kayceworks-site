@@ -3,8 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-<title>P&L Calendar Journal</title>
+<title>Mason's P&L Calendar Journal</title>
 
 <style>
 
@@ -18,7 +17,7 @@
 body{
   background:
     linear-gradient(rgba(10,15,25,.72), rgba(10,15,25,.78)),
-    url("http://imgur.com/a/PGmdXDA");
+    url("https://cdn.discordapp.com/attachments/864511785838182410/1504606086081286155/IMG_5684.jpg?ex=6a07991d&is=6a06479d&hm=0d9b9101e30085c5bccfd7129478ee550c210ea0cb50fc1ba572f81e87a4ac46&");
   background-size:cover;
   background-position:center;
   background-attachment:fixed;
@@ -35,7 +34,6 @@ body{
 h1{
   font-size:42px;
   font-weight:900;
-  letter-spacing:-1px;
 }
 
 .month-pnl{
@@ -64,7 +62,7 @@ h1{
 .day,
 table,
 .modal-card{
-  background:rgba(20,25,38,.48);
+  background:rgba(20,25,38,.58);
   backdrop-filter:blur(12px);
   -webkit-backdrop-filter:blur(12px);
   border:1px solid rgba(255,255,255,.12);
@@ -113,12 +111,6 @@ table,
   padding:12px 18px;
   border-radius:12px;
   cursor:pointer;
-  font-size:15px;
-  transition:.2s;
-}
-
-.nav button:hover{
-  background:rgba(255,255,255,.14);
 }
 
 .calendar{
@@ -140,11 +132,6 @@ table,
   border-radius:14px;
   padding:12px;
   cursor:pointer;
-  transition:.2s;
-}
-
-.day:hover{
-  transform:scale(1.02);
 }
 
 .day.win{
@@ -174,6 +161,10 @@ table,
 .day-trades{
   font-size:14px;
   color:#d4d9e5;
+}
+
+.muted{
+  opacity:.35;
 }
 
 .tag{
@@ -271,7 +262,6 @@ td{
   }
 
 }
-
 </style>
 </head>
 
@@ -321,7 +311,6 @@ td{
 <div class="calendar" id="calendar"></div>
 
 <div class="trades-table">
-
 <table>
 
 <thead>
@@ -340,22 +329,6 @@ td{
 <tbody id="tradeTable"></tbody>
 
 </table>
-
-</div>
-
-</div>
-
-<div class="modal" id="modal">
-
-<div class="modal-card">
-
-<div class="modal-head">
-<h2 id="modalTitle">Trades</h2>
-<button class="close" onclick="closeModal()">×</button>
-</div>
-
-<div id="tradeList"></div>
-
 </div>
 
 </div>
@@ -364,52 +337,31 @@ td{
 
 const trades = [
 
-{exitDate:"2026-04-27", stock:"GOOGL", contract:"$350 Call", expires:"2026-04-27", contracts:3, entryPrice:0.56, exitPrice:0.88, entry:168.12, exit:263.86},
-
-{exitDate:"2026-04-27", stock:"NVDA", contract:"$212.5 Call", expires:"2026-04-27", contracts:2, entryPrice:0.20, exitPrice:0.20, entry:40.08, exit:39.90},
-
-{exitDate:"2026-04-28", stock:"AAPL", contract:"$275 Call", expires:"2026-04-29", contracts:5, entryPrice:0.7324, exitPrice:0.7575, entry:366.20, exit:378.74},
-
-{exitDate:"2026-04-29", stock:"PYPL", contract:"$52 Call", expires:"2026-05-01", contracts:4, entryPrice:0.275, exitPrice:0.09, entry:110.16, exit:35.82},
-
-{exitDate:"2026-04-30", stock:"TSLA", contract:"$380 Call", expires:"2026-05-01", contracts:3, entryPrice:1.75, exitPrice:2.10, entry:525.12, exit:629.84},
-
-{exitDate:"2026-05-01", stock:"HPE", contract:"$30 Call", expires:"2026-05-15", contracts:2, entryPrice:0.49, exitPrice:0.61, entry:98.08, exit:121.90},
-
-{exitDate:"2026-05-01", stock:"MSFT", contract:"$420 Call", expires:"2026-05-01", contracts:8, entryPrice:0.78625, exitPrice:0.14, entry:629.32, exit:111.64},
-
-{exitDate:"2026-05-04", stock:"AMZN", contract:"$275 Call", expires:"2026-05-04", contracts:5, entryPrice:0.43, exitPrice:1.4295, entry:215.20, exit:714.76},
-
-{exitDate:"2026-05-05", stock:"TSLA", contract:"$410 Call", expires:"2026-05-06", contracts:3, entryPrice:1.50, exitPrice:2.06, entry:450.12, exit:617.85},
-
-{exitDate:"2026-05-05", stock:"QQQ", contract:"$679 Put", expires:"2026-05-05", contracts:2, entryPrice:0.66, exitPrice:0.51, entry:132.08, exit:101.90},
-
-{exitDate:"2026-05-05", stock:"TTD", contract:"$30 Call", expires:"2026-06-18", contracts:1, entryPrice:1.08, exitPrice:1.05, entry:108.04, exit:104.94},
-
-{exitDate:"2026-05-06", stock:"NVDA", contract:"$207.5 Call", expires:"2026-05-06", contracts:15, entryPrice:0.45, exitPrice:0.7195, entry:675.60, exit:1079.31},
-
-{exitDate:"2026-05-06", stock:"NVDA", contract:"$210 Call", expires:"2026-05-06", contracts:3, entryPrice:0.30, exitPrice:0.1328, entry:90.12, exit:39.84},
-
-{exitDate:"2026-05-07", stock:"AAPL", contract:"$295 Call", expires:"2026-05-08", contracts:17, entryPrice:0.6945, exitPrice:0.3695, entry:1180.68, exit:628.21},
-
-{exitDate:"2026-05-11", stock:"APLD", contract:"$45 Call", expires:"2026-06-18", contracts:1, entryPrice:4.70, exitPrice:5.30, entry:470.04, exit:529.93},
-
-{exitDate:"2026-05-11", stock:"PLTR", contract:"$90 Call", expires:"2026-05-15", contracts:8, entryPrice:0.25, exitPrice:1.00, entry:200.32, exit:799.63},
-
-{exitDate:"2026-05-12", stock:"HL", contract:"$18.5 Put", expires:"2026-05-15", contracts:3, entryPrice:0.15, exitPrice:0.27, entry:45.12, exit:80.86},
-
-{exitDate:"2026-05-14", stock:"AVGO", contract:"$450 Call", expires:"2026-05-15", contracts:11, entryPrice:1.2145, exitPrice:1.6882, entry:1336.00, exit:1857.00}
+{exitDate:"2026-04-27", stock:"GOOGL", contract:"$350 Call", expires:"2026-04-27", contracts:3, entry:168.12, exit:263.86},
+{exitDate:"2026-04-27", stock:"NVDA", contract:"$212.5 Call", expires:"2026-04-27", contracts:2, entry:40.08, exit:39.90},
+{exitDate:"2026-04-28", stock:"AAPL", contract:"$275 Call", expires:"2026-04-29", contracts:5, entry:366.20, exit:378.74},
+{exitDate:"2026-04-29", stock:"PYPL", contract:"$52 Call", expires:"2026-05-01", contracts:4, entry:110.16, exit:35.82},
+{exitDate:"2026-04-30", stock:"TSLA", contract:"$380 Call", expires:"2026-05-01", contracts:3, entry:525.12, exit:629.84},
+{exitDate:"2026-05-01", stock:"HPE", contract:"$30 Call", expires:"2026-05-15", contracts:2, entry:98.08, exit:121.90},
+{exitDate:"2026-05-01", stock:"MSFT", contract:"$420 Call", expires:"2026-05-01", contracts:8, entry:629.32, exit:111.64},
+{exitDate:"2026-05-04", stock:"AMZN", contract:"$275 Call", expires:"2026-05-04", contracts:5, entry:215.20, exit:714.76},
+{exitDate:"2026-05-05", stock:"TSLA", contract:"$410 Call", expires:"2026-05-06", contracts:3, entry:450.12, exit:617.85},
+{exitDate:"2026-05-05", stock:"QQQ", contract:"$679 Put", expires:"2026-05-05", contracts:2, entry:132.08, exit:101.90},
+{exitDate:"2026-05-05", stock:"TTD", contract:"$30 Call", expires:"2026-06-18", contracts:1, entry:108.04, exit:104.94},
+{exitDate:"2026-05-06", stock:"NVDA", contract:"$207.5 Call", expires:"2026-05-06", contracts:15, entry:675.60, exit:1079.31},
+{exitDate:"2026-05-06", stock:"NVDA", contract:"$210 Call", expires:"2026-05-06", contracts:3, entry:90.12, exit:39.84},
+{exitDate:"2026-05-07", stock:"AAPL", contract:"$295 Call", expires:"2026-05-08", contracts:17, entry:1180.68, exit:628.21},
+{exitDate:"2026-05-11", stock:"APLD", contract:"$45 Call", expires:"2026-06-18", contracts:1, entry:470.04, exit:529.93},
+{exitDate:"2026-05-11", stock:"PLTR", contract:"$90 Call", expires:"2026-05-15", contracts:8, entry:200.32, exit:799.63},
+{exitDate:"2026-05-12", stock:"HL", contract:"$18.5 Put", expires:"2026-05-15", contracts:3, entry:45.12, exit:80.86},
+{exitDate:"2026-05-14", stock:"AVGO", contract:"$450 Call", expires:"2026-05-15", contracts:11, entry:1336.00, exit:1857.00}
 
 ].map(t => ({
   ...t,
-  date:t.exitDate,
-  pnl:t.exit - t.entry,
-  percent:((t.exit - t.entry)/t.entry)*100
+  pnl:t.exit - t.entry
 }));
 
 let viewDate = new Date("2026-05-01");
-
-const calendar = document.getElementById("calendar");
 
 function money(n){
   return n.toLocaleString("en-US",{
@@ -418,18 +370,16 @@ function money(n){
   });
 }
 
-function price(n){
-  return "$"+n.toFixed(2);
-}
-
 function dateKey(d){
   return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
 }
 
 function render(){
-  renderCalendar();
+
   renderStats();
+  renderCalendar();
   renderTable();
+
 }
 
 function renderStats(){
@@ -438,31 +388,26 @@ function renderStats(){
   const m=viewDate.getMonth();
 
   const monthTradesArr=trades.filter(t=>{
-    const d=new Date(t.date+"T00:00:00");
+    const d=new Date(t.exitDate+"T00:00:00");
     return d.getFullYear()===y && d.getMonth()===m;
   });
 
   const totalPnl=trades.reduce((s,t)=>s+t.pnl,0);
-  const monthPnlValue=monthTradesArr.reduce((s,t)=>s+t.pnl,0);
-  const monthEntry=monthTradesArr.reduce((s,t)=>s+t.entry,0);
-  const monthPercent=monthEntry?(monthPnlValue/monthEntry)*100:0;
-  const wins=monthTradesArr.filter(t=>t.pnl>0).length;
-  const winRateValue=monthTradesArr.length?Math.round((wins/monthTradesArr.length)*100):0;
+  const monthPnl=monthTradesArr.reduce((s,t)=>s+t.pnl,0);
+  const wins=trades.filter(t=>t.pnl>0).length;
+  const winRate=Math.round((wins/trades.length)*100);
 
-  totalPnlEl.textContent=money(totalPnl);
-  totalPnlEl.className="value "+(totalPnl>=0?"green":"red");
+  document.getElementById("totalPnl").textContent=money(totalPnl);
+  document.getElementById("dashMonthPnl").textContent=money(monthPnl);
+  document.getElementById("winRate").textContent=winRate+"%";
+  document.getElementById("monthTrades").textContent=monthTradesArr.length;
+  document.getElementById("monthPnl").textContent=money(monthPnl);
 
-  dashMonthPnl.textContent=money(monthPnlValue);
-  dashMonthPnl.className="value "+(monthPnlValue>=0?"green":"red");
-
-  monthPnl.textContent=`${money(monthPnlValue)} / ${monthPercent.toFixed(2)}%`;
-  monthPnl.className="month-pnl "+(monthPnlValue>=0?"green":"red");
-
-  winRate.textContent=winRateValue+"%";
-  monthTrades.textContent=monthTradesArr.length;
 }
 
 function renderCalendar(){
+
+  const calendar=document.getElementById("calendar");
 
   calendar.innerHTML="";
 
@@ -476,7 +421,8 @@ function renderCalendar(){
   const y=viewDate.getFullYear();
   const m=viewDate.getMonth();
 
-  monthTitle.textContent=viewDate.toLocaleString("default",{month:"long"})+" "+y;
+  document.getElementById("monthTitle").textContent=
+    viewDate.toLocaleString("default",{month:"long"})+" "+y;
 
   const first=new Date(y,m,1);
   const start=new Date(first);
@@ -491,7 +437,7 @@ function renderCalendar(){
 
     const key=dateKey(d);
 
-    const dayTrades=trades.filter(t=>t.date===key);
+    const dayTrades=trades.filter(t=>t.exitDate===key);
 
     const pnl=dayTrades.reduce((s,t)=>s+t.pnl,0);
 
@@ -502,67 +448,38 @@ function renderCalendar(){
       (pnl>0?"win":pnl<0?"loss":"")+
       (d.getMonth()!==m?" muted":"");
 
-    day.onclick=()=>openModal(key);
-
     day.innerHTML=`
       <div class="day-num">${d.getDate()}</div>
 
       ${dayTrades.length?`
         <div class="day-pnl">${money(pnl)}</div>
         <div class="day-trades">${dayTrades.length} Trade${dayTrades.length>1?"s":""}</div>
-        <span class="tag">${dayTrades[0].stock}${dayTrades.length>1?" +"+(dayTrades.length-1):""}</span>
       `:""}
     `;
 
     calendar.appendChild(day);
+
   }
+
 }
 
 function renderTable(){
 
-  tradeTable.innerHTML=trades.map(t=>`
+  document.getElementById("tradeTable").innerHTML=trades.map(t=>`
     <tr>
       <td>${t.exitDate}</td>
       <td><strong>${t.stock}</strong></td>
       <td>${t.contract}</td>
       <td>${t.expires}</td>
       <td>${t.contracts}</td>
-      <td>${price(t.entryPrice)} / ${money(t.entry)}</td>
-      <td>${price(t.exitPrice)} / ${money(t.exit)}</td>
+      <td>${money(t.entry)}</td>
+      <td>${money(t.exit)}</td>
       <td class="${t.pnl>=0?"green":"red"}">
-        <strong>${money(t.pnl)} / ${t.percent.toFixed(2)}%</strong>
+        <strong>${money(t.pnl)}</strong>
       </td>
     </tr>
   `).join("");
-}
 
-function openModal(date){
-
-  const dayTrades=trades.filter(t=>t.date===date);
-
-  modalTitle.textContent="Trades - "+date;
-
-  tradeList.innerHTML=dayTrades.length
-    ?dayTrades.map(t=>`
-      <div class="trade">
-        <strong>${t.stock} ${t.contract}</strong><br>
-        Expires: ${t.expires}<br>
-        Contracts: ${t.contracts}<br>
-        Entry: ${price(t.entryPrice)} / ${money(t.entry)}<br>
-        Exit: ${price(t.exitPrice)} / ${money(t.exit)}<br>
-        P&L:
-        <span class="${t.pnl>=0?"green":"red"}">
-          ${money(t.pnl)} / ${t.percent.toFixed(2)}%
-        </span>
-      </div>
-    `).join("")
-    :`<p style="color:#8f9bad;">No trades for this day.</p>`;
-
-  modal.classList.add("show");
-}
-
-function closeModal(){
-  modal.classList.remove("show");
 }
 
 function changeMonth(n){
