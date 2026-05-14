@@ -1,372 +1,404 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>P&L Journal</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <style>
-    *{
-      box-sizing:border-box;
-      margin:0;
-      padding:0;
-      font-family:Inter,Arial,sans-serif
-    }
+<title>P&L Calendar Journal</title>
 
-    body{
-      background:#0f1420;
-      color:#e8eef7;
-      min-height:100vh;
-      padding:22px
-    }
+<style>
 
-    .container{
-      max-width:1250px;
-      margin:auto
-    }
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+  font-family:Inter,Arial,sans-serif;
+}
 
-    h1{
-      font-size:30px
-    }
+body{
+  background:
+    linear-gradient(rgba(10,15,25,.72), rgba(10,15,25,.78)),
+    url("https://i.ibb.co/7xM9hK3w/IMG-3907.jpg");
+  background-size:cover;
+  background-position:center;
+  background-attachment:fixed;
+  color:#e8eef7;
+  min-height:100vh;
+  padding:22px;
+}
 
-    .month-pnl{
-      font-size:25px;
-      font-weight:900;
-      margin-top:6px
-    }
+.container{
+  max-width:1300px;
+  margin:auto;
+}
 
-    .green{color:#14d8a6}
-    .red{color:#ff5f7e}
+h1{
+  font-size:42px;
+  font-weight:900;
+  letter-spacing:-1px;
+}
 
-    .dashboard{
-      display:grid;
-      grid-template-columns:repeat(4,1fr);
-      gap:14px;
-      margin:18px 0
-    }
+.month-pnl{
+  margin-top:8px;
+  font-size:34px;
+  font-weight:900;
+}
 
-    .card{
-      background:#171d2b;
-      border:1px solid #252f45;
-      border-radius:16px;
-      padding:18px
-    }
+.green{
+  color:#14d8a6;
+}
 
-    .label{
-      color:#8f9bad;
-      font-size:14px;
-      margin-bottom:8px
-    }
+.red{
+  color:#ff5f7e;
+}
 
-    .value{
-      font-size:28px;
-      font-weight:900
-    }
+.dashboard{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:16px;
+  margin:24px 0;
+}
 
-    .calendar-head{
-      background:#171d2b;
-      border:1px solid #252f45;
-      border-radius:16px;
-      padding:14px;
-      margin-bottom:10px;
-      display:flex;
-      justify-content:space-between;
-      align-items:center
-    }
+.card,
+.calendar-head,
+.day,
+table,
+.modal-card{
+  background:rgba(20,25,38,.48);
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+  border:1px solid rgba(255,255,255,.12);
+  box-shadow:0 8px 30px rgba(0,0,0,.25);
+}
 
-    .month-title{
-      font-size:22px;
-      font-weight:900
-    }
+.card{
+  border-radius:22px;
+  padding:22px;
+}
 
-    .nav{
-      display:flex;
-      gap:8px
-    }
+.label{
+  color:#b8c0d4;
+  font-size:15px;
+  margin-bottom:10px;
+}
 
-    .nav button{
-      background:#222b3f;
-      color:white;
-      border:1px solid #33405a;
-      padding:9px 14px;
-      border-radius:8px;
-      cursor:pointer
-    }
+.value{
+  font-size:38px;
+  font-weight:900;
+}
 
-    .calendar{
-      display:grid;
-      grid-template-columns:repeat(7,1fr);
-      gap:4px
-    }
+.calendar-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  border-radius:22px;
+  padding:18px 22px;
+  margin-bottom:12px;
+}
 
-    .weekday{
-      text-align:center;
-      color:#8f9bad;
-      font-size:13px;
-      padding:10px;
-      font-weight:800
-    }
+.month-title{
+  font-size:32px;
+  font-weight:900;
+}
 
-    .day{
-      min-height:125px;
-      background:#171d2b;
-      border:1px solid #252f45;
-      border-radius:10px;
-      padding:10px;
-      cursor:pointer
-    }
+.nav{
+  display:flex;
+  gap:10px;
+}
 
-    .day:hover{
-      border-color:#14d8a6
-    }
+.nav button{
+  background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.12);
+  color:white;
+  padding:12px 18px;
+  border-radius:12px;
+  cursor:pointer;
+  font-size:15px;
+  transition:.2s;
+}
 
-    .day.win{
-      background:#08786f
-    }
+.nav button:hover{
+  background:rgba(255,255,255,.14);
+}
 
-    .day.loss{
-      background:#a94463
-    }
+.calendar{
+  display:grid;
+  grid-template-columns:repeat(7,1fr);
+  gap:5px;
+}
 
-    .day-num{
-      text-align:right;
-      font-size:13px;
-      color:#cbd5e1;
-      margin-bottom:18px
-    }
+.weekday{
+  text-align:center;
+  padding:10px;
+  font-size:14px;
+  color:#d2d9e6;
+  font-weight:800;
+}
 
-    .muted{
-      opacity:.35
-    }
+.day{
+  min-height:145px;
+  border-radius:14px;
+  padding:12px;
+  cursor:pointer;
+  transition:.2s;
+}
 
-    .day-pnl{
-      font-size:17px;
-      font-weight:900;
-      margin-bottom:4px
-    }
+.day:hover{
+  transform:scale(1.02);
+}
 
-    .day-trades{
-      font-size:14px
-    }
+.day.win{
+  background:rgba(20,216,166,.18);
+  border:1px solid rgba(20,216,166,.45);
+}
 
-    .tag{
-      display:inline-block;
-      background:#14d8a6;
-      color:#06110e;
-      padding:3px 6px;
-      border-radius:5px;
-      font-size:10px;
-      font-weight:900;
-      margin-top:7px
-    }
+.day.loss{
+  background:rgba(255,95,126,.18);
+  border:1px solid rgba(255,95,126,.4);
+}
 
-    .trades-table{
-      margin-top:18px;
-      overflow-x:auto
-    }
+.day-num{
+  text-align:right;
+  font-size:15px;
+  margin-bottom:18px;
+  color:white;
+  font-weight:700;
+}
 
-    table{
-      width:100%;
-      border-collapse:collapse;
-      background:#171d2b;
-      border:1px solid #252f45;
-      border-radius:16px;
-      overflow:hidden
-    }
+.day-pnl{
+  font-size:18px;
+  font-weight:900;
+  margin-bottom:5px;
+}
 
-    th,td{
-      text-align:left;
-      padding:12px;
-      border-bottom:1px solid #252f45;
-      font-size:14px
-    }
+.day-trades{
+  font-size:14px;
+  color:#d4d9e5;
+}
 
-    th{
-      color:#8f9bad
-    }
+.tag{
+  display:inline-block;
+  margin-top:8px;
+  padding:5px 8px;
+  border-radius:8px;
+  background:#14d8a6;
+  color:#07110e;
+  font-size:11px;
+  font-weight:900;
+}
 
-    .modal{
-      display:none;
-      position:fixed;
-      inset:0;
-      background:rgba(0,0,0,.7);
-      align-items:center;
-      justify-content:center;
-      z-index:20;
-      padding:16px
-    }
+.trades-table{
+  margin-top:24px;
+  overflow-x:auto;
+}
 
-    .modal.show{
-      display:flex
-    }
+table{
+  width:100%;
+  border-collapse:collapse;
+  border-radius:22px;
+  overflow:hidden;
+}
 
-    .modal-card{
-      width:100%;
-      max-width:600px;
-      background:#171d2b;
-      border:1px solid #33405a;
-      border-radius:18px;
-      padding:20px
-    }
+th,td{
+  padding:16px;
+  text-align:left;
+  border-bottom:1px solid rgba(255,255,255,.08);
+}
 
-    .modal-head{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      margin-bottom:16px
-    }
+th{
+  color:#b8c0d4;
+  font-size:14px;
+}
 
-    .close{
-      background:none;
-      border:none;
-      color:white;
-      font-size:26px;
-      cursor:pointer
-    }
+td{
+  font-size:15px;
+}
 
-    .trade{
-      padding:10px 0;
-      border-bottom:1px solid #252f45;
-      font-size:14px
-    }
+.modal{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.7);
+  justify-content:center;
+  align-items:center;
+  z-index:100;
+}
 
-    @media(max-width:850px){
-      body{padding:12px}
+.modal.show{
+  display:flex;
+}
 
-      .calendar-head{
-        flex-direction:column;
-        align-items:flex-start
-      }
+.modal-card{
+  width:95%;
+  max-width:650px;
+  border-radius:22px;
+  padding:24px;
+}
 
-      .dashboard{
-        grid-template-columns:1fr 1fr
-      }
+.modal-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:18px;
+}
 
-      .calendar{
-        grid-template-columns:1fr
-      }
+.close{
+  background:none;
+  border:none;
+  color:white;
+  font-size:28px;
+  cursor:pointer;
+}
 
-      .weekday{
-        display:none
-      }
-    }
-  </style>
+.trade{
+  padding:12px 0;
+  border-bottom:1px solid rgba(255,255,255,.08);
+  line-height:1.7;
+}
+
+@media(max-width:900px){
+
+  .dashboard{
+    grid-template-columns:1fr 1fr;
+  }
+
+  .calendar{
+    grid-template-columns:1fr;
+  }
+
+  .weekday{
+    display:none;
+  }
+
+}
+
+</style>
 </head>
 
 <body>
 
 <div class="container">
 
-  <h1>P&L Calendar Journal</h1>
-  <div id="monthPnl" class="month-pnl">$0.00 / 0%</div>
+<h1>P&L Calendar Journal</h1>
+<div id="monthPnl" class="month-pnl">$0.00 / 0%</div>
 
-  <section class="dashboard">
-    <div class="card">
-      <div class="label">Total P&L</div>
-      <div id="totalPnl" class="value">$0.00</div>
-    </div>
+<section class="dashboard">
 
-    <div class="card">
-      <div class="label">Month P&L</div>
-      <div id="dashMonthPnl" class="value">$0.00</div>
-    </div>
+<div class="card">
+  <div class="label">Total P&L</div>
+  <div id="totalPnl" class="value">$0.00</div>
+</div>
 
-    <div class="card">
-      <div class="label">Win Rate</div>
-      <div id="winRate" class="value">0%</div>
-    </div>
+<div class="card">
+  <div class="label">Month P&L</div>
+  <div id="dashMonthPnl" class="value">$0.00</div>
+</div>
 
-    <div class="card">
-      <div class="label">Trades This Month</div>
-      <div id="monthTrades" class="value">0</div>
-    </div>
-  </section>
+<div class="card">
+  <div class="label">Win Rate</div>
+  <div id="winRate" class="value">0%</div>
+</div>
 
-  <div class="calendar-head">
-    <div id="monthTitle" class="month-title"></div>
+<div class="card">
+  <div class="label">Trades This Month</div>
+  <div id="monthTrades" class="value">0</div>
+</div>
 
-    <div class="nav">
-      <button onclick="changeMonth(-1)">←</button>
-      <button onclick="goToday()">Today</button>
-      <button onclick="changeMonth(1)">→</button>
-    </div>
-  </div>
+</section>
 
-  <div class="calendar" id="calendar"></div>
+<div class="calendar-head">
 
-  <div class="trades-table">
-    <table>
-      <thead>
-        <tr>
-          <th>Exit Date</th>
-          <th>Stock</th>
-          <th>Contract</th>
-          <th>Expires</th>
-          <th>Contracts</th>
-          <th>Entry</th>
-          <th>Exit</th>
-          <th>P&L</th>
-        </tr>
-      </thead>
+<div id="monthTitle" class="month-title"></div>
 
-      <tbody id="tradeTable"></tbody>
-    </table>
-  </div>
+<div class="nav">
+  <button onclick="changeMonth(-1)">←</button>
+  <button onclick="goToday()">Today</button>
+  <button onclick="changeMonth(1)">→</button>
+</div>
+
+</div>
+
+<div class="calendar" id="calendar"></div>
+
+<div class="trades-table">
+
+<table>
+
+<thead>
+<tr>
+<th>Exit Date</th>
+<th>Stock</th>
+<th>Contract</th>
+<th>Expires</th>
+<th>Contracts</th>
+<th>Entry</th>
+<th>Exit</th>
+<th>P&L</th>
+</tr>
+</thead>
+
+<tbody id="tradeTable"></tbody>
+
+</table>
+
+</div>
 
 </div>
 
 <div class="modal" id="modal">
-  <div class="modal-card">
 
-    <div class="modal-head">
-      <h2 id="modalTitle">Trades</h2>
-      <button class="close" onclick="closeModal()">×</button>
-    </div>
+<div class="modal-card">
 
-    <div id="tradeList"></div>
+<div class="modal-head">
+<h2 id="modalTitle">Trades</h2>
+<button class="close" onclick="closeModal()">×</button>
+</div>
 
-  </div>
+<div id="tradeList"></div>
+
+</div>
+
 </div>
 
 <script>
 
 const trades = [
 
-  {exitDate:"2026-04-27", stock:"GOOGL", contract:"$350 Call", expires:"2026-04-27", contracts:3, entryPrice:0.56, exitPrice:0.88, entry:168.12, exit:263.86},
+{exitDate:"2026-04-27", stock:"GOOGL", contract:"$350 Call", expires:"2026-04-27", contracts:3, entryPrice:0.56, exitPrice:0.88, entry:168.12, exit:263.86},
 
-  {exitDate:"2026-04-27", stock:"NVDA", contract:"$212.5 Call", expires:"2026-04-27", contracts:2, entryPrice:0.20, exitPrice:0.20, entry:40.08, exit:39.90},
+{exitDate:"2026-04-27", stock:"NVDA", contract:"$212.5 Call", expires:"2026-04-27", contracts:2, entryPrice:0.20, exitPrice:0.20, entry:40.08, exit:39.90},
 
-  {exitDate:"2026-04-28", stock:"AAPL", contract:"$275 Call", expires:"2026-04-29", contracts:5, entryPrice:0.7324, exitPrice:0.7575, entry:366.20, exit:378.74},
+{exitDate:"2026-04-28", stock:"AAPL", contract:"$275 Call", expires:"2026-04-29", contracts:5, entryPrice:0.7324, exitPrice:0.7575, entry:366.20, exit:378.74},
 
-  {exitDate:"2026-04-29", stock:"PYPL", contract:"$52 Call", expires:"2026-05-01", contracts:4, entryPrice:0.275, exitPrice:0.09, entry:110.16, exit:35.82},
+{exitDate:"2026-04-29", stock:"PYPL", contract:"$52 Call", expires:"2026-05-01", contracts:4, entryPrice:0.275, exitPrice:0.09, entry:110.16, exit:35.82},
 
-  {exitDate:"2026-04-30", stock:"TSLA", contract:"$380 Call", expires:"2026-05-01", contracts:3, entryPrice:1.75, exitPrice:2.10, entry:525.12, exit:629.84},
+{exitDate:"2026-04-30", stock:"TSLA", contract:"$380 Call", expires:"2026-05-01", contracts:3, entryPrice:1.75, exitPrice:2.10, entry:525.12, exit:629.84},
 
-  {exitDate:"2026-05-01", stock:"HPE", contract:"$30 Call", expires:"2026-05-15", contracts:2, entryPrice:0.49, exitPrice:0.61, entry:98.08, exit:121.90},
+{exitDate:"2026-05-01", stock:"HPE", contract:"$30 Call", expires:"2026-05-15", contracts:2, entryPrice:0.49, exitPrice:0.61, entry:98.08, exit:121.90},
 
-  {exitDate:"2026-05-01", stock:"MSFT", contract:"$420 Call", expires:"2026-05-01", contracts:8, entryPrice:0.78625, exitPrice:0.14, entry:629.32, exit:111.64},
+{exitDate:"2026-05-01", stock:"MSFT", contract:"$420 Call", expires:"2026-05-01", contracts:8, entryPrice:0.78625, exitPrice:0.14, entry:629.32, exit:111.64},
 
-  {exitDate:"2026-05-04", stock:"AMZN", contract:"$275 Call", expires:"2026-05-04", contracts:5, entryPrice:0.43, exitPrice:1.4295, entry:215.20, exit:714.76},
+{exitDate:"2026-05-04", stock:"AMZN", contract:"$275 Call", expires:"2026-05-04", contracts:5, entryPrice:0.43, exitPrice:1.4295, entry:215.20, exit:714.76},
 
-  {exitDate:"2026-05-05", stock:"TSLA", contract:"$410 Call", expires:"2026-05-06", contracts:3, entryPrice:1.50, exitPrice:2.06, entry:450.12, exit:617.85},
+{exitDate:"2026-05-05", stock:"TSLA", contract:"$410 Call", expires:"2026-05-06", contracts:3, entryPrice:1.50, exitPrice:2.06, entry:450.12, exit:617.85},
 
-  {exitDate:"2026-05-05", stock:"QQQ", contract:"$679 Put", expires:"2026-05-05", contracts:2, entryPrice:0.66, exitPrice:0.51, entry:132.08, exit:101.90},
+{exitDate:"2026-05-05", stock:"QQQ", contract:"$679 Put", expires:"2026-05-05", contracts:2, entryPrice:0.66, exitPrice:0.51, entry:132.08, exit:101.90},
 
-  {exitDate:"2026-05-05", stock:"TTD", contract:"$30 Call", expires:"2026-06-18", contracts:1, entryPrice:1.08, exitPrice:1.05, entry:108.04, exit:104.94},
+{exitDate:"2026-05-05", stock:"TTD", contract:"$30 Call", expires:"2026-06-18", contracts:1, entryPrice:1.08, exitPrice:1.05, entry:108.04, exit:104.94},
 
-  {exitDate:"2026-05-06", stock:"NVDA", contract:"$207.5 Call", expires:"2026-05-06", contracts:15, entryPrice:0.45, exitPrice:0.7195, entry:675.60, exit:1079.31},
+{exitDate:"2026-05-06", stock:"NVDA", contract:"$207.5 Call", expires:"2026-05-06", contracts:15, entryPrice:0.45, exitPrice:0.7195, entry:675.60, exit:1079.31},
 
-  {exitDate:"2026-05-06", stock:"NVDA", contract:"$210 Call", expires:"2026-05-06", contracts:3, entryPrice:0.30, exitPrice:0.1328, entry:90.12, exit:39.84},
+{exitDate:"2026-05-06", stock:"NVDA", contract:"$210 Call", expires:"2026-05-06", contracts:3, entryPrice:0.30, exitPrice:0.1328, entry:90.12, exit:39.84},
 
-  {exitDate:"2026-05-07", stock:"AAPL", contract:"$295 Call", expires:"2026-05-08", contracts:17, entryPrice:0.6945, exitPrice:0.3695, entry:1180.68, exit:628.21},
+{exitDate:"2026-05-07", stock:"AAPL", contract:"$295 Call", expires:"2026-05-08", contracts:17, entryPrice:0.6945, exitPrice:0.3695, entry:1180.68, exit:628.21},
 
-  {exitDate:"2026-05-11", stock:"APLD", contract:"$45 Call", expires:"2026-06-18", contracts:1, entryPrice:4.70, exitPrice:5.30, entry:470.04, exit:529.93},
+{exitDate:"2026-05-11", stock:"APLD", contract:"$45 Call", expires:"2026-06-18", contracts:1, entryPrice:4.70, exitPrice:5.30, entry:470.04, exit:529.93},
 
-  {exitDate:"2026-05-11", stock:"P", contract:"$90 Call", expires:"2026-05-15", contracts:8, entryPrice:0.25, exitPrice:1.00, entry:200.32, exit:799.63},
+{exitDate:"2026-05-11", stock:"PLTR", contract:"$90 Call", expires:"2026-05-15", contracts:8, entryPrice:0.25, exitPrice:1.00, entry:200.32, exit:799.63},
 
-  {exitDate:"2026-05-12", stock:"HL", contract:"$18.5 Put", expires:"2026-05-15", contracts:3, entryPrice:0.15, exitPrice:0.27, entry:45.12, exit:80.86},
+{exitDate:"2026-05-12", stock:"HL", contract:"$18.5 Put", expires:"2026-05-15", contracts:3, entryPrice:0.15, exitPrice:0.27, entry:45.12, exit:80.86},
 
-  {exitDate:"2026-05-14", stock:"AVGO", contract:"$450 Call", expires:"2026-05-15", contracts:11, entryPrice:1.2145, exitPrice:1.6882, entry:1336.00, exit:1857.00}
+{exitDate:"2026-05-14", stock:"AVGO", contract:"$450 Call", expires:"2026-05-15", contracts:11, entryPrice:1.2145, exitPrice:1.6882, entry:1336.00, exit:1857.00}
 
 ].map(t => ({
   ...t,
@@ -376,6 +408,7 @@ const trades = [
 }));
 
 let viewDate = new Date("2026-05-01");
+
 const calendar = document.getElementById("calendar");
 
 function money(n){
@@ -404,39 +437,39 @@ function renderStats(){
   const y=viewDate.getFullYear();
   const m=viewDate.getMonth();
 
-  const monthTrades=trades.filter(t=>{
+  const monthTradesArr=trades.filter(t=>{
     const d=new Date(t.date+"T00:00:00");
     return d.getFullYear()===y && d.getMonth()===m;
   });
 
   const totalPnl=trades.reduce((s,t)=>s+t.pnl,0);
-  const monthPnl=monthTrades.reduce((s,t)=>s+t.pnl,0);
-  const monthEntry=monthTrades.reduce((s,t)=>s+t.entry,0);
-  const monthPercent=monthEntry?(monthPnl/monthEntry)*100:0;
-  const wins=monthTrades.filter(t=>t.pnl>0).length;
-  const winRateValue=monthTrades.length?Math.round((wins/monthTrades.length)*100):0;
+  const monthPnlValue=monthTradesArr.reduce((s,t)=>s+t.pnl,0);
+  const monthEntry=monthTradesArr.reduce((s,t)=>s+t.entry,0);
+  const monthPercent=monthEntry?(monthPnlValue/monthEntry)*100:0;
+  const wins=monthTradesArr.filter(t=>t.pnl>0).length;
+  const winRateValue=monthTradesArr.length?Math.round((wins/monthTradesArr.length)*100):0;
 
   totalPnlEl.textContent=money(totalPnl);
   totalPnlEl.className="value "+(totalPnl>=0?"green":"red");
 
-  dashMonthPnl.textContent=money(monthPnl);
-  dashMonthPnl.className="value "+(monthPnl>=0?"green":"red");
+  dashMonthPnl.textContent=money(monthPnlValue);
+  dashMonthPnl.className="value "+(monthPnlValue>=0?"green":"red");
 
-  monthPnl.textContent=`${money(monthPnl)} / ${monthPercent.toFixed(2)}%`;
-  monthPnl.className="month-pnl "+(monthPnl>=0?"green":"red");
+  monthPnl.textContent=`${money(monthPnlValue)} / ${monthPercent.toFixed(2)}%`;
+  monthPnl.className="month-pnl "+(monthPnlValue>=0?"green":"red");
 
   winRate.textContent=winRateValue+"%";
-  monthTrades.textContent=monthTrades.length;
+  monthTrades.textContent=monthTradesArr.length;
 }
 
 function renderCalendar(){
 
   calendar.innerHTML="";
 
-  ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"].forEach(d=>{
+  ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"].forEach(day=>{
     const el=document.createElement("div");
     el.className="weekday";
-    el.textContent=d;
+    el.textContent=day;
     calendar.appendChild(el);
   });
 
