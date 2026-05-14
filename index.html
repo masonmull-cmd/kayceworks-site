@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
 <title>P&L Calendar Journal</title>
 
 <style>
@@ -17,7 +18,7 @@
 body{
   background:
     linear-gradient(rgba(10,15,25,.72), rgba(10,15,25,.78)),
-    url("https://imgur.com/a/PGmdXDA");
+    url("http://imgur.com/a/PGmdXDA");
   background-size:cover;
   background-position:center;
   background-attachment:fixed;
@@ -344,6 +345,21 @@ td{
 
 </div>
 
+<div class="modal" id="modal">
+
+<div class="modal-card">
+
+<div class="modal-head">
+<h2 id="modalTitle">Trades</h2>
+<button class="close" onclick="closeModal()">×</button>
+</div>
+
+<div id="tradeList"></div>
+
+</div>
+
+</div>
+
 <script>
 
 const trades = [
@@ -391,7 +407,175 @@ const trades = [
   percent:((t.exit - t.entry)/t.entry)*100
 }));
 
-// your existing JS below stays the same
+let viewDate = new Date("2026-05-01");
+
+const calendar = document.getElementById("calendar");
+
+function money(n){
+  return n.toLocaleString("en-US",{
+    style:"currency",
+    currency:"USD"
+  });
+}
+
+function price(n){
+  return "$"+n.toFixed(2);
+}
+
+function dateKey(d){
+  return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+}
+
+function render(){
+  renderCalendar();
+  renderStats();
+  renderTable();
+}
+
+function renderStats(){
+
+  const y=viewDate.getFullYear();
+  const m=viewDate.getMonth();
+
+  const monthTradesArr=trades.filter(t=>{
+    const d=new Date(t.date+"T00:00:00");
+    return d.getFullYear()===y && d.getMonth()===m;
+  });
+
+  const totalPnl=trades.reduce((s,t)=>s+t.pnl,0);
+  const monthPnlValue=monthTradesArr.reduce((s,t)=>s+t.pnl,0);
+  const monthEntry=monthTradesArr.reduce((s,t)=>s+t.entry,0);
+  const monthPercent=monthEntry?(monthPnlValue/monthEntry)*100:0;
+  const wins=monthTradesArr.filter(t=>t.pnl>0).length;
+  const winRateValue=monthTradesArr.length?Math.round((wins/monthTradesArr.length)*100):0;
+
+  totalPnlEl.textContent=money(totalPnl);
+  totalPnlEl.className="value "+(totalPnl>=0?"green":"red");
+
+  dashMonthPnl.textContent=money(monthPnlValue);
+  dashMonthPnl.className="value "+(monthPnlValue>=0?"green":"red");
+
+  monthPnl.textContent=`${money(monthPnlValue)} / ${monthPercent.toFixed(2)}%`;
+  monthPnl.className="month-pnl "+(monthPnlValue>=0?"green":"red");
+
+  winRate.textContent=winRateValue+"%";
+  monthTrades.textContent=monthTradesArr.length;
+}
+
+function renderCalendar(){
+
+  calendar.innerHTML="";
+
+  ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"].forEach(day=>{
+    const el=document.createElement("div");
+    el.className="weekday";
+    el.textContent=day;
+    calendar.appendChild(el);
+  });
+
+  const y=viewDate.getFullYear();
+  const m=viewDate.getMonth();
+
+  monthTitle.textContent=viewDate.toLocaleString("default",{month:"long"})+" "+y;
+
+  const first=new Date(y,m,1);
+  const start=new Date(first);
+
+  start.setDate(start.getDate()-first.getDay());
+
+  for(let i=0;i<42;i++){
+
+    const d=new Date(start);
+
+    d.setDate(start.getDate()+i);
+
+    const key=dateKey(d);
+
+    const dayTrades=trades.filter(t=>t.date===key);
+
+    const pnl=dayTrades.reduce((s,t)=>s+t.pnl,0);
+
+    const day=document.createElement("div");
+
+    day.className=
+      "day "+
+      (pnl>0?"win":pnl<0?"loss":"")+
+      (d.getMonth()!==m?" muted":"");
+
+    day.onclick=()=>openModal(key);
+
+    day.innerHTML=`
+      <div class="day-num">${d.getDate()}</div>
+
+      ${dayTrades.length?`
+        <div class="day-pnl">${money(pnl)}</div>
+        <div class="day-trades">${dayTrades.length} Trade${dayTrades.length>1?"s":""}</div>
+        <span class="tag">${dayTrades[0].stock}${dayTrades.length>1?" +"+(dayTrades.length-1):""}</span>
+      `:""}
+    `;
+
+    calendar.appendChild(day);
+  }
+}
+
+function renderTable(){
+
+  tradeTable.innerHTML=trades.map(t=>`
+    <tr>
+      <td>${t.exitDate}</td>
+      <td><strong>${t.stock}</strong></td>
+      <td>${t.contract}</td>
+      <td>${t.expires}</td>
+      <td>${t.contracts}</td>
+      <td>${price(t.entryPrice)} / ${money(t.entry)}</td>
+      <td>${price(t.exitPrice)} / ${money(t.exit)}</td>
+      <td class="${t.pnl>=0?"green":"red"}">
+        <strong>${money(t.pnl)} / ${t.percent.toFixed(2)}%</strong>
+      </td>
+    </tr>
+  `).join("");
+}
+
+function openModal(date){
+
+  const dayTrades=trades.filter(t=>t.date===date);
+
+  modalTitle.textContent="Trades - "+date;
+
+  tradeList.innerHTML=dayTrades.length
+    ?dayTrades.map(t=>`
+      <div class="trade">
+        <strong>${t.stock} ${t.contract}</strong><br>
+        Expires: ${t.expires}<br>
+        Contracts: ${t.contracts}<br>
+        Entry: ${price(t.entryPrice)} / ${money(t.entry)}<br>
+        Exit: ${price(t.exitPrice)} / ${money(t.exit)}<br>
+        P&L:
+        <span class="${t.pnl>=0?"green":"red"}">
+          ${money(t.pnl)} / ${t.percent.toFixed(2)}%
+        </span>
+      </div>
+    `).join("")
+    :`<p style="color:#8f9bad;">No trades for this day.</p>`;
+
+  modal.classList.add("show");
+}
+
+function closeModal(){
+  modal.classList.remove("show");
+}
+
+function changeMonth(n){
+  viewDate.setMonth(viewDate.getMonth()+n);
+  render();
+}
+
+function goToday(){
+  viewDate=new Date("2026-05-01");
+  render();
+}
+
+render();
 
 </script>
 
