@@ -11,14 +11,15 @@
 
 body{
   background:
-    linear-gradient(rgba(10,15,25,.48),rgba(10,15,25,.58)),
-    url("https://cdn.discordapp.com/attachments/864511785838182410/1504606086081286155/IMG_5684.jpg?ex=6a07991d&is=6a06479d&hm=0d9b9101e30085c5bccfd7129478ee550c210ea0cb50fc1ba572f81e87a4ac46&");
+    linear-gradient(rgba(10,15,25,.40),rgba(10,15,25,.55)),
+    url("https://cdn.discordapp.com/attachments/896516201528848475/1504704778997989456/960px-Black_colour.png?ex=6a07f507&is=6a06a387&hm=bf2cd4480de048cb76a94abbe952d8dad5e045ac55b52ed0d3f1d6d013868cbd&");
   background-size:cover;
   background-position:center;
   background-attachment:fixed;
   color:#e8eef7;
   min-height:100vh;
   padding:22px;
+  transition:background .4s ease;
 }
 
 .hidden{display:none!important}
@@ -33,13 +34,7 @@ body{
   box-shadow:0 8px 30px rgba(0,0,0,.25);
 }
 
-.login-card,.home-card{
-  width:100%;
-  max-width:440px;
-  border-radius:28px;
-  padding:36px;
-}
-
+.login-card,.home-card{width:100%;max-width:440px;border-radius:28px;padding:36px}
 .logo,h1{font-size:42px;font-weight:900}
 .subtitle{color:#b8c0d4;margin:12px 0 24px;line-height:1.5}
 .input{width:100%;padding:15px;margin-bottom:14px;border-radius:14px;border:none;background:rgba(255,255,255,.1);color:white;font-size:16px}
@@ -55,7 +50,6 @@ body{
 
 .btn.main,.btn.active{background:#14d8a6;color:#07110e;font-weight:900}
 .error{color:#ff5f7e;margin-top:12px;text-align:center}
-
 .home-buttons{display:grid;gap:14px}
 .home-btn{padding:18px;border-radius:18px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);cursor:pointer}
 .home-btn:hover,.day:hover,.crypto-card:hover,.stat:hover{transform:scale(1.015)}
@@ -288,14 +282,46 @@ const trades=[
 let viewDate=new Date();
 let cryptoChartInstance=null;
 
+function setProfile1Background(){
+  document.body.style.background = `
+    linear-gradient(rgba(10,15,25,.48),rgba(10,15,25,.58)),
+    url("https://cdn.discordapp.com/attachments/864511785838182410/1504606086081286155/IMG_5684.jpg?ex=6a07991d&is=6a06479d&hm=0d9b9101e30085c5bccfd7129478ee550c210ea0cb50fc1ba572f81e87a4ac46&")
+  `;
+  document.body.style.backgroundSize="cover";
+  document.body.style.backgroundPosition="center";
+  document.body.style.backgroundAttachment="fixed";
+}
+
+function setProfile3Background(){
+  document.body.style.background = `
+    linear-gradient(rgba(10,15,25,.35),rgba(10,15,25,.55)),
+    url("https://cdn.discordapp.com/attachments/896516201528848475/1504704890830852126/uuunldy3tywa1.png?ex=6a07f522&is=6a06a3a2&hm=34481a11acb1f40b805e1ad551bdb395e7b37bb555d95fdce83f2f15839f43a2&")
+  `;
+  document.body.style.backgroundSize="cover";
+  document.body.style.backgroundPosition="center";
+  document.body.style.backgroundAttachment="fixed";
+}
+
+function setMenuBackground(){
+  document.body.style.background = `
+    linear-gradient(rgba(10,15,25,.40),rgba(10,15,25,.55)),
+    url("https://cdn.discordapp.com/attachments/896516201528848475/1504704778997989456/960px-Black_colour.png?ex=6a07f507&is=6a06a387&hm=bf2cd4480de048cb76a94abbe952d8dad5e045ac55b52ed0d3f1d6d013868cbd&")
+  `;
+  document.body.style.backgroundSize="cover";
+  document.body.style.backgroundPosition="center";
+  document.body.style.backgroundAttachment="fixed";
+}
+
 function login(){
   const u=document.getElementById("username").value.trim();
   const p=document.getElementById("password").value.trim();
 
   if(u==="1" && p==="1"){
+    setProfile1Background();
     loginPage.classList.add("hidden");
     tradingHomePage.classList.remove("hidden");
   }else if(u==="3" && p==="3"){
+    setProfile3Background();
     loginPage.classList.add("hidden");
     cs2HomePage.classList.remove("hidden");
   }else{
