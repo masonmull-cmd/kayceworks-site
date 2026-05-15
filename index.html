@@ -4,6 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>P&L Calendar Journal</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
 *{box-sizing:border-box;margin:0;padding:0;font-family:Inter,Arial,sans-serif}
@@ -12,21 +13,19 @@ body{background:linear-gradient(rgba(10,15,25,.48),rgba(10,15,25,.58)),url("http
 .top{display:flex;justify-content:space-between;align-items:center;gap:12px}
 h1{font-size:42px;font-weight:900}.month-pnl{margin-top:8px;font-size:34px;font-weight:900}
 .green{color:#14d8a6}.red{color:#ff5f7e}
-.top-buttons{display:flex;gap:10px}
-.btn,.nav button{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);color:white;padding:12px 18px;border-radius:12px;cursor:pointer}
-.btn.active{background:#14d8a6;color:#07110e;font-weight:900}
+.top-buttons{display:flex;gap:10px}.btn,.nav button{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);color:white;padding:12px 18px;border-radius:12px;cursor:pointer}.btn.active{background:#14d8a6;color:#07110e;font-weight:900}
 .dashboard{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin:24px 0}
 .card,.calendar-head,.day,table,.modal-card,.crypto-card{background:rgba(20,25,38,.42);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.12);box-shadow:0 8px 30px rgba(0,0,0,.25)}
 .card{border-radius:22px;padding:22px}.label{color:#b8c0d4;font-size:15px;margin-bottom:10px}.value{font-size:38px;font-weight:900}
-.calendar-head{display:flex;justify-content:space-between;align-items:center;border-radius:22px;padding:18px 22px;margin-bottom:12px}
-.month-title{font-size:32px;font-weight:900}.nav{display:flex;gap:10px}
+.calendar-head{display:flex;justify-content:space-between;align-items:center;border-radius:22px;padding:18px 22px;margin-bottom:12px}.month-title{font-size:32px;font-weight:900}.nav{display:flex;gap:10px}
 .calendar{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}.weekday{text-align:center;padding:10px;font-size:14px;color:#d2d9e6;font-weight:800}
 .day{min-height:145px;border-radius:14px;padding:12px;cursor:pointer;transition:.2s}.day:hover{transform:scale(1.015)}
 .day.win{background:rgba(20,216,166,.18);border:1px solid rgba(20,216,166,.45)}.day.loss{background:rgba(255,95,126,.18);border:1px solid rgba(255,95,126,.4)}
 .day-num{text-align:right;font-size:15px;margin-bottom:18px;color:white;font-weight:700}.day-pnl{font-size:18px;font-weight:900;margin-bottom:5px}.day-trades{font-size:14px;color:#d4d9e5}.muted{opacity:.35}
 .trades-table{margin-top:24px;overflow-x:auto}table{width:100%;border-collapse:collapse;border-radius:22px;overflow:hidden}th,td{padding:16px;text-align:left;border-bottom:1px solid rgba(255,255,255,.08)}th{color:#b8c0d4;font-size:14px}td{font-size:15px}
-.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);justify-content:center;align-items:center;z-index:100;padding:16px}.modal.show{display:flex}.modal-card{width:95%;max-width:650px;border-radius:22px;padding:24px}.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}.close{background:none;border:none;color:white;font-size:28px;cursor:pointer}.trade{padding:12px 0;border-bottom:1px solid rgba(255,255,255,.08);line-height:1.7}
-#cryptoView{display:none}.crypto-head{display:flex;justify-content:space-between;align-items:center;margin:24px 0}.crypto-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}.crypto-card{border-radius:20px;padding:18px;display:flex;align-items:center;justify-content:space-between;gap:14px}.coin-left{display:flex;align-items:center;gap:12px}.coin-left img{width:38px;height:38px}.coin-name{font-weight:900;font-size:18px}.coin-symbol{color:#b8c0d4;font-size:13px}.coin-price{text-align:right;font-size:18px;font-weight:900}.coin-move{font-size:14px;margin-top:5px}
+.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);justify-content:center;align-items:center;z-index:100;padding:16px}.modal.show{display:flex}.modal-card{width:95%;max-width:800px;border-radius:22px;padding:24px}.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}.close{background:none;border:none;color:white;font-size:28px;cursor:pointer}.trade{padding:12px 0;border-bottom:1px solid rgba(255,255,255,.08);line-height:1.7}
+#cryptoView{display:none}.crypto-head{display:flex;justify-content:space-between;align-items:center;margin:24px 0}.crypto-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}.crypto-card{border-radius:20px;padding:18px;display:flex;align-items:center;justify-content:space-between;gap:14px;cursor:pointer;transition:.2s}.crypto-card:hover{transform:scale(1.015);border-color:#14d8a6}.coin-left{display:flex;align-items:center;gap:12px}.coin-left img{width:38px;height:38px}.coin-name{font-weight:900;font-size:18px}.coin-symbol{color:#b8c0d4;font-size:13px}.coin-price{text-align:right;font-size:18px;font-weight:900}.coin-move{font-size:14px;margin-top:5px}
+#cryptoChart{max-height:360px}
 @media(max-width:900px){.top{align-items:flex-start;flex-direction:column}.dashboard{grid-template-columns:1fr 1fr}.calendar{grid-template-columns:1fr}.weekday{display:none}.crypto-grid{grid-template-columns:1fr}}
 </style>
 </head>
@@ -91,6 +90,16 @@ h1{font-size:42px;font-weight:900}.month-pnl{margin-top:8px;font-size:34px;font-
   </div>
 </div>
 
+<div class="modal" id="cryptoChartModal">
+  <div class="modal-card">
+    <div class="modal-head">
+      <h2 id="cryptoChartTitle">Crypto Chart</h2>
+      <button class="close" onclick="closeCryptoChart()">×</button>
+    </div>
+    <canvas id="cryptoChart"></canvas>
+  </div>
+</div>
+
 <script>
 const trades=[
 {exitDate:"2026-04-27",stock:"GOOGL",contract:"$350 Call",expires:"2026-04-27",contracts:3,entry:168.12,exit:263.86},
@@ -114,6 +123,7 @@ const trades=[
 ].map(t=>({...t,pnl:t.exit-t.entry}));
 
 let viewDate=new Date();
+let cryptoChartInstance=null;
 
 function money(n){return n.toLocaleString("en-US",{style:"currency",currency:"USD"});}
 function dateKey(d){return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");}
@@ -127,17 +137,12 @@ function renderStats(){
   const monthPnl=monthTradesArr.reduce((s,t)=>s+t.pnl,0);
   const wins=trades.filter(t=>t.pnl>0).length;
   const winRate=Math.round((wins/trades.length)*100);
-
-  totalPnlEl=document.getElementById("totalPnl");
-  dashMonthPnlEl=document.getElementById("dashMonthPnl");
-  monthPnlEl=document.getElementById("monthPnl");
-
-  totalPnlEl.textContent=money(totalPnl);
-  totalPnlEl.className="value "+(totalPnl>=0?"green":"red");
-  dashMonthPnlEl.textContent=money(monthPnl);
-  dashMonthPnlEl.className="value "+(monthPnl>=0?"green":"red");
-  monthPnlEl.textContent=money(monthPnl);
-  monthPnlEl.className="month-pnl "+(monthPnl>=0?"green":"red");
+  document.getElementById("totalPnl").textContent=money(totalPnl);
+  document.getElementById("totalPnl").className="value "+(totalPnl>=0?"green":"red");
+  document.getElementById("dashMonthPnl").textContent=money(monthPnl);
+  document.getElementById("dashMonthPnl").className="value "+(monthPnl>=0?"green":"red");
+  document.getElementById("monthPnl").textContent=money(monthPnl);
+  document.getElementById("monthPnl").className="month-pnl "+(monthPnl>=0?"green":"red");
   document.getElementById("winRate").textContent=winRate+"%";
   document.getElementById("monthTrades").textContent=monthTradesArr.length;
 }
@@ -148,12 +153,10 @@ function renderCalendar(){
   ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"].forEach(day=>{
     const el=document.createElement("div");el.className="weekday";el.textContent=day;calendar.appendChild(el);
   });
-
   const y=viewDate.getFullYear(),m=viewDate.getMonth();
   document.getElementById("monthTitle").textContent=viewDate.toLocaleString("default",{month:"long"})+" "+y;
   const first=new Date(y,m,1),start=new Date(first);
   start.setDate(start.getDate()-first.getDay());
-
   for(let i=0;i<42;i++){
     const d=new Date(start);d.setDate(start.getDate()+i);
     const key=dateKey(d);
@@ -209,19 +212,17 @@ async function loadCrypto(){
   status.style.display="block";
   status.textContent="Loading crypto prices...";
   grid.innerHTML="";
-
   try{
     const url="https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=10&page=1&sparkline=false&price_change_percentage=24h,7d";
     const res=await fetch(url);
-    if(!res.ok) throw new Error("Crypto data failed to load.");
+    if(!res.ok) throw new Error();
     const data=await res.json();
     status.style.display="none";
-
     grid.innerHTML=data.map(c=>{
       const move24=c.price_change_percentage_24h||0;
       const move7=c.price_change_percentage_7d_in_currency||0;
       return `
-        <div class="crypto-card">
+        <div class="crypto-card" onclick="loadCryptoChart('${c.id}','${c.name.replace(/'/g,"")}')">
           <div class="coin-left">
             <img src="${c.image}" alt="${c.name}">
             <div>
@@ -240,6 +241,54 @@ async function loadCrypto(){
   }catch(e){
     status.textContent="Could not load crypto prices. Try refreshing in a minute.";
   }
+}
+
+async function loadCryptoChart(id,name){
+  document.getElementById("cryptoChartTitle").textContent=name+" — Last 7 Days";
+  document.getElementById("cryptoChartModal").classList.add("show");
+
+  try{
+    const res=await fetch(`https://api.coingecko.com/api/v3/coins/${id}/market_chart?vs_currency=usd&days=7`);
+    if(!res.ok) throw new Error();
+    const data=await res.json();
+
+    const labels=data.prices.map(p=>{
+      const d=new Date(p[0]);
+      return d.toLocaleDateString("en-US",{month:"short",day:"numeric"})+" "+d.toLocaleTimeString("en-US",{hour:"numeric"});
+    });
+
+    const prices=data.prices.map(p=>p[1]);
+
+    if(cryptoChartInstance) cryptoChartInstance.destroy();
+
+    cryptoChartInstance=new Chart(document.getElementById("cryptoChart"),{
+      type:"line",
+      data:{
+        labels,
+        datasets:[{
+          label:name+" Price",
+          data:prices,
+          borderWidth:3,
+          tension:.35,
+          pointRadius:0
+        }]
+      },
+      options:{
+        responsive:true,
+        plugins:{legend:{labels:{color:"#e8eef7"}}},
+        scales:{
+          x:{ticks:{color:"#b8c0d4",maxTicksLimit:7},grid:{color:"rgba(255,255,255,.08)"}},
+          y:{ticks:{color:"#b8c0d4",callback:v=>"$"+v.toLocaleString()},grid:{color:"rgba(255,255,255,.08)"}}
+        }
+      }
+    });
+  }catch(e){
+    document.getElementById("cryptoChartTitle").textContent="Could not load chart";
+  }
+}
+
+function closeCryptoChart(){
+  document.getElementById("cryptoChartModal").classList.remove("show");
 }
 
 render();
