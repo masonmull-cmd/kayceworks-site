@@ -21,7 +21,6 @@ body{
   padding:22px;
   transition:background .4s ease;
 }
-}
 
 .hidden{display:none!important}
 .container{max-width:1300px;margin:auto}
@@ -278,6 +277,7 @@ const trades=[
 {exitDate:"2026-05-11",stock:"PLTR",contract:"$90 Call",expires:"2026-05-15",contracts:8,entry:200.32,exit:799.63},
 {exitDate:"2026-05-12",stock:"HL",contract:"$18.5 Put",expires:"2026-05-15",contracts:3,entry:45.12,exit:80.86},
 {exitDate:"2026-05-14",stock:"AVGO",contract:"$450 Call",expires:"2026-05-15",contracts:11,entry:1336.00,exit:1857.00},
+{exitDate:"2026-05-15",stock:"AXP",contract:"$315 Call",expires:"2026-05-15",contracts:5,entry:550.00,exit:490.00},
 {exitDate:"2026-05-18",stock:"MSFT",contract:"$430 Call",expires:"2026-05-18",contracts:21,entry:978.80,exit:599.06},
 {exitDate:"2026-05-19",stock:"MSFT",contract:"$440 Call",expires:"2026-05-20",contracts:13,entry:1157.52,exit:1689.38},
 {exitDate:"2026-05-19",stock:"QQQ",contract:"$694 Put",expires:"2026-05-19",contracts:3,entry:247.12,exit:74.86}
@@ -287,30 +287,14 @@ let viewDate=new Date();
 let cryptoChartInstance=null;
 
 function setProfile1Background(){
-  document.body.style.background = `
-    linear-gradient(rgba(10,15,25,.48),rgba(10,15,25,.58)),
-    url("profile1-bg.jpg")
-  `;
+  document.body.style.background=`linear-gradient(rgba(10,15,25,.48),rgba(10,15,25,.58)),url("profile1-bg.jpg")`;
   document.body.style.backgroundSize="cover";
   document.body.style.backgroundPosition="center";
   document.body.style.backgroundAttachment="fixed";
 }
 
 function setProfile3Background(){
-  document.body.style.background = `
-    linear-gradient(rgba(10,15,25,.35),rgba(10,15,25,.55)),
-    url("profile3-bg.png")
-  `;
-  document.body.style.backgroundSize="cover";
-  document.body.style.backgroundPosition="center";
-  document.body.style.backgroundAttachment="fixed";
-}
-
-function setMenuBackground(){
-  document.body.style.background = `
-    linear-gradient(rgba(10,15,25,.40),rgba(10,15,25,.55)),
-    url("menu-bg.jpg")
-  `;
+  document.body.style.background=`linear-gradient(rgba(10,15,25,.35),rgba(10,15,25,.55)),url("profile3-bg.png")`;
   document.body.style.backgroundSize="cover";
   document.body.style.backgroundPosition="center";
   document.body.style.backgroundAttachment="fixed";
@@ -322,16 +306,16 @@ function login(){
 
   if(u==="1" && p==="1"){
     setProfile1Background();
-    loginPage.classList.add("hidden");
-    tradingHomePage.classList.remove("hidden");
+    document.getElementById("loginPage").classList.add("hidden");
+    document.getElementById("tradingHomePage").classList.remove("hidden");
   }else if(u==="3" && p==="3"){
     setProfile3Background();
-    loginPage.classList.add("hidden");
-    cs2HomePage.classList.remove("hidden");
+    document.getElementById("loginPage").classList.add("hidden");
+    document.getElementById("cs2HomePage").classList.remove("hidden");
   }else{
-    error.textContent="Incorrect username or password";
+    document.getElementById("error").textContent="Incorrect username or password";
   }
-
+}
 
 function tradingHome(){tradingAppPage.classList.add("hidden");tradingHomePage.classList.remove("hidden")}
 function cs2Home(){cs2Page.classList.add("hidden");cs2HomePage.classList.remove("hidden")}
