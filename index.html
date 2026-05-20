@@ -287,38 +287,29 @@ let viewDate=new Date();
 let cryptoChartInstance=null;
 
 function setProfile1Background(){
-  function setProfile1Background(){
-
   document.body.style.background = `
     linear-gradient(rgba(10,15,25,.48),rgba(10,15,25,.58)),
     url("profile1-bg.jpg")
   `;
-
   document.body.style.backgroundSize="cover";
   document.body.style.backgroundPosition="center";
   document.body.style.backgroundAttachment="fixed";
-
 }
+
+function setProfile3Background(){
+  document.body.style.background = `
+    linear-gradient(rgba(10,15,25,.35),rgba(10,15,25,.55)),
+    url("profile3-bg.png")
+  `;
+  document.body.style.backgroundSize="cover";
+  document.body.style.backgroundPosition="center";
+  document.body.style.backgroundAttachment="fixed";
 }
 
 function setMenuBackground(){
-
   document.body.style.background = `
     linear-gradient(rgba(10,15,25,.40),rgba(10,15,25,.55)),
     url("menu-bg.jpg")
-  `;
-
-  document.body.style.backgroundSize="cover";
-  document.body.style.backgroundPosition="center";
-  document.body.style.backgroundAttachment="fixed";
-
-}
-}
-
-function setMenuBackground(){
-  document.body.style.background = `
-    linear-gradient(rgba(10,15,25,.40),rgba(10,15,25,.55)),
-    url("https://cdn.discordapp.com/attachments/896516201528848475/1504704778997989456/960px-Black_colour.png?ex=6a07f507&is=6a06a387&hm=bf2cd4480de048cb76a94abbe952d8dad5e045ac55b52ed0d3f1d6d013868cbd&")
   `;
   document.body.style.backgroundSize="cover";
   document.body.style.backgroundPosition="center";
@@ -340,7 +331,7 @@ function login(){
   }else{
     error.textContent="Incorrect username or password";
   }
-}
+
 
 function tradingHome(){tradingAppPage.classList.add("hidden");tradingHomePage.classList.remove("hidden")}
 function cs2Home(){cs2Page.classList.add("hidden");cs2HomePage.classList.remove("hidden")}
