@@ -12,7 +12,7 @@
 body{
   background:
     linear-gradient(rgba(10,15,25,.40),rgba(10,15,25,.55)),
-    url("https://cdn.discordapp.com/attachments/864511785838182410/1504606086081286155/IMG_5684.jpg?ex=6a09935d&is=6a0841dd&hm=edbdf413efb9c623bf9a154696ecbe36ce0bcef49718a3a35600d8b7d1e039b2&");
+    url("menu-bg.jpg");
   background-size:cover;
   background-position:center;
   background-attachment:fixed;
@@ -20,6 +20,7 @@ body{
   min-height:100vh;
   padding:22px;
   transition:background .4s ease;
+}
 }
 
 .hidden{display:none!important}
@@ -276,30 +277,42 @@ const trades=[
 {exitDate:"2026-05-11",stock:"APLD",contract:"$45 Call",expires:"2026-06-18",contracts:1,entry:470.04,exit:529.93},
 {exitDate:"2026-05-11",stock:"PLTR",contract:"$90 Call",expires:"2026-05-15",contracts:8,entry:200.32,exit:799.63},
 {exitDate:"2026-05-12",stock:"HL",contract:"$18.5 Put",expires:"2026-05-15",contracts:3,entry:45.12,exit:80.86},
-{exitDate:"2026-05-14",stock:"AVGO",contract:"$450 Call",expires:"2026-05-15",contracts:11,entry:1336.00,exit:1857.00}
+{exitDate:"2026-05-14",stock:"AVGO",contract:"$450 Call",expires:"2026-05-15",contracts:11,entry:1336.00,exit:1857.00},
+{exitDate:"2026-05-18",stock:"MSFT",contract:"$430 Call",expires:"2026-05-18",contracts:21,entry:978.80,exit:599.06},
+{exitDate:"2026-05-19",stock:"MSFT",contract:"$440 Call",expires:"2026-05-20",contracts:13,entry:1157.52,exit:1689.38},
+{exitDate:"2026-05-19",stock:"QQQ",contract:"$694 Put",expires:"2026-05-19",contracts:3,entry:247.12,exit:74.86}
 ].map(t=>({...t,pnl:t.exit-t.entry}));
 
 let viewDate=new Date();
 let cryptoChartInstance=null;
 
 function setProfile1Background(){
+  function setProfile1Background(){
+
   document.body.style.background = `
     linear-gradient(rgba(10,15,25,.48),rgba(10,15,25,.58)),
-    url("https://cdn.discordapp.com/attachments/864511785838182410/1504606086081286155/IMG_5684.jpg?ex=6a09935d&is=6a0841dd&hm=edbdf413efb9c623bf9a154696ecbe36ce0bcef49718a3a35600d8b7d1e039b2&")
+    url("profile1-bg.jpg")
   `;
+
   document.body.style.backgroundSize="cover";
   document.body.style.backgroundPosition="center";
   document.body.style.backgroundAttachment="fixed";
+
+}
 }
 
-function setProfile3Background(){
+function setMenuBackground(){
+
   document.body.style.background = `
-    linear-gradient(rgba(10,15,25,.35),rgba(10,15,25,.55)),
-    url("https://cdn.discordapp.com/attachments/896516201528848475/1504704890830852126/uuunldy3tywa1.png?ex=6a07f522&is=6a06a3a2&hm=34481a11acb1f40b805e1ad551bdb395e7b37bb555d95fdce83f2f15839f43a2&")
+    linear-gradient(rgba(10,15,25,.40),rgba(10,15,25,.55)),
+    url("menu-bg.jpg")
   `;
+
   document.body.style.backgroundSize="cover";
   document.body.style.backgroundPosition="center";
   document.body.style.backgroundAttachment="fixed";
+
+}
 }
 
 function setMenuBackground(){
