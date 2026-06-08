@@ -280,7 +280,17 @@ const trades=[
 {exitDate:"2026-05-15",stock:"AXP",contract:"$315 Call",expires:"2026-05-15",contracts:5,entry:550.00,exit:490.00},
 {exitDate:"2026-05-18",stock:"MSFT",contract:"$430 Call",expires:"2026-05-18",contracts:21,entry:978.80,exit:599.06},
 {exitDate:"2026-05-19",stock:"MSFT",contract:"$440 Call",expires:"2026-05-20",contracts:13,entry:1157.52,exit:1689.38},
-{exitDate:"2026-05-19",stock:"QQQ",contract:"$694 Put",expires:"2026-05-19",contracts:3,entry:247.12,exit:74.86}
+{exitDate:"2026-05-19",stock:"QQQ",contract:"$694 Put",expires:"2026-05-19",contracts:3,entry:247.12,exit:74.86},
+{exitDate:"2026-05-20",stock:"TSLA",contract:"$417.5 Call",expires:"2026-05-20",contracts:20,entry:1782.80,exit:1899.08},
+{exitDate:"2026-05-21",stock:"IWM",contract:"$281 Call",expires:"2026-05-21",contracts:15,entry:1200.60,exit:989.31},
+{exitDate:"2026-05-22",stock:"IWM",contract:"$286 Call",expires:"2026-05-22",contracts:10,entry:700.40,exit:249.56},
+{exitDate:"2026-05-22",stock:"QQQ",contract:"$724 Call",expires:"2026-05-22",contracts:10,entry:1010.40,exit:91.53},
+{exitDate:"2026-05-28",stock:"ZS",contract:"$175 Call",expires:"2026-06-18",contracts:5,entry:300.20,exit:274.77},
+{exitDate:"2026-06-01",stock:"MSFT",contract:"$465 Call",expires:"2026-06-01",contracts:3,entry:318.12,exit:479.86},
+{exitDate:"2026-06-01",stock:"QQQ",contract:"$741 Call",expires:"2026-06-01",contracts:10,entry:700.40,exit:820.50},
+{exitDate:"2026-06-03",stock:"NVDA",contract:"$237.5 Call",expires:"2026-06-03",contracts:10,entry:810.40,exit:0.00},
+{exitDate:"2026-06-04",stock:"CVS",contract:"$98 Call",expires:"2026-06-12",contracts:12,entry:509.48,exit:635.44},
+{exitDate:"2026-06-08",stock:"AAPL",contract:"$317.5 Call",expires:"2026-06-08",contracts:6,entry:618.24,exit:887.72}
 ].map(t=>({...t,pnl:t.exit-t.entry}));
 
 let viewDate=new Date();
