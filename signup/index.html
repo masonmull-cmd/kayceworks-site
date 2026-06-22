@@ -1,1 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Create Account - KayceWorks</title>
+</head>
+<body style="background:#0b0f18;color:white;font-family:Arial;text-align:center;padding:80px;">
 
+<h1>Create Account</h1>
+
+<input id="email" placeholder="Email"
+style="padding:12px;width:300px;"><br><br>
+
+<input id="password" type="password"
+placeholder="Password"
+style="padding:12px;width:300px;"><br><br>
+
+<button onclick="signup()"
+style="padding:12px 24px;">
+Create Account
+</button>
+
+<p id="error"></p>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+import {
+  getAuth,
+  createUserWithEmailAndPassword
+}
+from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCQOCEH12LCI0yPKid0NjlFVDWjhpQtgJc",
+  authDomain: "profitandloss-d332f.firebaseapp.com",
+  projectId: "profitandloss-d332f",
+  storageBucket: "profitandloss-d332f.firebasestorage.app",
+  messagingSenderId: "29521289621",
+  appId: "1:29521289621:web:c7a77d4e9714c21ef4169c"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+window.signup = async function(){
+
+  const email =
+    document.getElementById("email").value;
+
+  const password =
+    document.getElementById("password").value;
+
+  try{
+
+    await createUserWithEmailAndPassword(
+      auth,
+      email,
+      password
+    );
+
+    window.location.href="/dashboard";
+
+  }catch(err){
+
+    document.getElementById("error")
+      .innerText = err.message;
+
+  }
+
+}
+
+</script>
+
+</body>
+</html>
