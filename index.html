@@ -49,7 +49,20 @@ body{
 }
 
 .btn.main,.btn.active{background:#14d8a6;color:#07110e;font-weight:900}
+.btn.secondary{width:100%;margin-top:10px;background:rgba(255,255,255,.08);color:white;border:1px solid rgba(255,255,255,.12)}
 .error{color:#ff5f7e;margin-top:12px;text-align:center}
+
+.auth-header{text-align:center;margin-bottom:22px}
+.auth-title{font-size:38px;font-weight:900;margin-bottom:8px}
+.auth-subtitle{color:#b8c0d4;line-height:1.45;font-size:15px}
+.auth-tabs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:18px;background:rgba(255,255,255,.06);padding:6px;border-radius:16px}
+.auth-tab{border:none;border-radius:12px;padding:12px;color:#b8c0d4;background:transparent;font-weight:900;cursor:pointer}
+.auth-tab.active{background:#14d8a6;color:#07110e}
+.form-label{font-size:13px;color:#b8c0d4;margin-bottom:7px;font-weight:800}
+.auth-help{margin-top:14px;text-align:center;color:#b8c0d4;font-size:13px;line-height:1.4}
+.auth-link{color:#14d8a6;cursor:pointer;font-weight:900}
+.btn.secondary{width:100%;margin-top:10px;background:rgba(255,255,255,.08);color:white;border:1px solid rgba(255,255,255,.12)}
+
 .home-buttons{display:grid;gap:14px}
 .home-btn{padding:18px;border-radius:18px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);cursor:pointer}
 .home-btn:hover,.day:hover,.crypto-card:hover,.stat:hover{transform:scale(1.015)}
@@ -121,11 +134,32 @@ th{color:#b8c0d4;font-size:14px}
 
 <div id="loginPage" class="center">
   <div class="login-card">
-    <div class="logo">Journal</div>
-    <div class="subtitle">Track results, Review mistakes. Build consistency.</div>
-    <input id="username" class="input" placeholder="Username">
-    <input id="password" class="input" type="password" placeholder="Password">
-    <button class="btn main" onclick="login()">Sign In</button>
+    <div class="auth-header">
+      <div class="auth-title">Journal</div>
+      <div class="auth-subtitle">Track results, review mistakes, and build consistency.</div>
+    </div>
+
+    <div class="auth-tabs">
+      <button id="signinTab" class="auth-tab active" onclick="setAuthMode('signin')">Sign In</button>
+      <button id="createTab" class="auth-tab" onclick="setAuthMode('create')">Create Account</button>
+    </div>
+
+    <div class="form-label">Email</div>
+    <input id="username" class="input" placeholder="you@example.com">
+
+    <div class="form-label">Password</div>
+    <input id="password" class="input" type="password" placeholder="Enter your password">
+
+    <button id="authSubmitBtn" class="btn main" onclick="submitAuth()">Sign In</button>
+
+    <button class="btn secondary" onclick="quickProfile1()">Continue as Profile #1</button>
+    <button class="btn secondary" onclick="quickProfile3()">Continue as Profile #3</button>
+
+    <div class="auth-help">
+      New users can create an account with email and password.<br>
+      Existing users can sign in and keep their data saved.
+    </div>
+
     <div id="error" class="error"></div>
   </div>
 </div>
@@ -257,6 +291,54 @@ th{color:#b8c0d4;font-size:14px}
   </div>
 </div>
 
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut,
+  onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+
+import {
+  getFirestore,
+  doc,
+  setDoc,
+  getDoc,
+  collection,
+  addDoc,
+  getDocs
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCQOCEH12LCI0yPKid0NjlFVDWjhpQtgJc",
+  authDomain: "profitandloss-d332f.firebaseapp.com",
+  projectId: "profitandloss-d332f",
+  storageBucket: "profitandloss-d332f.firebasestorage.app",
+  messagingSenderId: "29521289621",
+  appId: "1:29521289621:web:c7a77d4e9714c21ef4169c",
+  measurementId: "G-SYGCMPHFGJ"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+window.firebaseAuth = auth;
+window.firebaseDb = db;
+window.firebaseCreateUser = createUserWithEmailAndPassword;
+window.firebaseSignIn = signInWithEmailAndPassword;
+window.firebaseSignOut = signOut;
+window.firebaseOnAuthStateChanged = onAuthStateChanged;
+window.firebaseDoc = doc;
+window.firebaseSetDoc = setDoc;
+window.firebaseGetDoc = getDoc;
+window.firebaseCollection = collection;
+window.firebaseAddDoc = addDoc;
+window.firebaseGetDocs = getDocs;
+</script>
+
 <script>
 const trades=[
 {exitDate:"2026-04-27",stock:"GOOGL",contract:"$350 Call",expires:"2026-04-27",contracts:3,entry:168.12,exit:263.86},
@@ -310,20 +392,93 @@ function setProfile3Background(){
   document.body.style.backgroundAttachment="fixed";
 }
 
-function login(){
+let authMode="signin";
+
+function setAuthMode(mode){
+  authMode=mode;
+  document.getElementById("signinTab").classList.toggle("active",mode==="signin");
+  document.getElementById("createTab").classList.toggle("active",mode==="create");
+  document.getElementById("authSubmitBtn").textContent = mode==="signin" ? "Sign In" : "Create Account";
+  document.getElementById("error").textContent="";
+}
+
+function submitAuth(){
+  if(authMode==="signin"){
+    login();
+  }else{
+    createAccount();
+  }
+}
+
+function quickProfile1(){
+  setProfile1Background();
+  document.getElementById("loginPage").classList.add("hidden");
+  document.getElementById("tradingHomePage").classList.remove("hidden");
+}
+
+function quickProfile3(){
+  setProfile3Background();
+  document.getElementById("loginPage").classList.add("hidden");
+  document.getElementById("cs2HomePage").classList.remove("hidden");
+}
+
+async function login(){
   const u=document.getElementById("username").value.trim();
   const p=document.getElementById("password").value.trim();
+  const errorEl=document.getElementById("error");
+  errorEl.textContent="";
 
   if(u==="1" && p==="1"){
-    setProfile1Background();
-    document.getElementById("loginPage").classList.add("hidden");
-    document.getElementById("tradingHomePage").classList.remove("hidden");
-  }else if(u==="3" && p==="3"){
-    setProfile3Background();
-    document.getElementById("loginPage").classList.add("hidden");
-    document.getElementById("cs2HomePage").classList.remove("hidden");
-  }else{
-    document.getElementById("error").textContent="Incorrect username or password";
+    quickProfile1();
+    return;
+  }
+
+  if(u==="3" && p==="3"){
+    quickProfile3();
+    return;
+  }
+
+  try{
+    await window.firebaseSignIn(window.firebaseAuth,u,p);
+    quickProfile1();
+  }catch(err){
+    errorEl.textContent="Login failed. Check your email and password.";
+    console.error(err);
+  }
+}
+
+async function createAccount(){
+  const email=document.getElementById("username").value.trim();
+  const password=document.getElementById("password").value.trim();
+  const errorEl=document.getElementById("error");
+  errorEl.textContent="";
+
+  if(!email.includes("@")){
+    errorEl.textContent="Enter a real email address.";
+    return;
+  }
+
+  if(password.length < 6){
+    errorEl.textContent="Password must be at least 6 characters.";
+    return;
+  }
+
+  try{
+    const userCred=await window.firebaseCreateUser(window.firebaseAuth,email,password);
+
+    await window.firebaseSetDoc(
+      window.firebaseDoc(window.firebaseDb,"users",userCred.user.uid),
+      {
+        email:email,
+        createdAt:new Date().toISOString(),
+        profile:"profile1"
+      }
+    );
+
+    quickProfile1();
+  }catch(err){
+    errorEl.textContent="Could not create account. This email may already be used.";
+    console.error(err);
   }
 }
 
