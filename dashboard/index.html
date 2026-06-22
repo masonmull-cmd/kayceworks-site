@@ -3,30 +3,21 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Journal</title>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<title>KayceWorks Dashboard</title>
 
 <style>
 *{box-sizing:border-box;margin:0;padding:0;font-family:Inter,Arial,sans-serif}
 
 body{
-  background:
-    linear-gradient(rgba(10,15,25,.40),rgba(10,15,25,.55)),
-    url("menu-bg.jpg");
-  background-size:cover;
-  background-position:center;
-  background-attachment:fixed;
-  color:#e8eef7;
-  min-height:100vh;
-  padding:22px;
-  transition:background .4s ease;
+  background:linear-gradient(rgba(10,15,25,.48),rgba(10,15,25,.58)),url("../profile1-bg.jpg");
+  background-size:cover;background-position:center;background-attachment:fixed;
+  color:#e8eef7;min-height:100vh;padding:22px
 }
 
 .hidden{display:none!important}
 .container{max-width:1300px;margin:auto}
-.center{display:flex;align-items:center;justify-content:center;min-height:100vh}
 
-.card,.calendar-head,.day,table,.modal-card,.login-card,.home-card,.crypto-card,.stat{
+.card,.calendar-head,.day,table,.modal-card{
   background:rgba(20,25,38,.42);
   backdrop-filter:blur(12px);
   -webkit-backdrop-filter:blur(12px);
@@ -34,44 +25,49 @@ body{
   box-shadow:0 8px 30px rgba(0,0,0,.25);
 }
 
-.login-card,.home-card{width:100%;max-width:440px;border-radius:28px;padding:36px}
-.logo,h1{font-size:42px;font-weight:900}
-.subtitle{color:#b8c0d4;margin:12px 0 24px;line-height:1.5}
-.input{width:100%;padding:15px;margin-bottom:14px;border-radius:14px;border:none;background:rgba(255,255,255,.1);color:white;font-size:16px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:24px}
+h1{font-size:42px;font-weight:900}
+.month-pnl{margin-top:8px;font-size:34px;font-weight:900}
+.green{color:#14d8a6}.red{color:#ff5f7e}
 
 .btn,.nav button{
   background:rgba(255,255,255,.08);
   border:1px solid rgba(255,255,255,.12);
-  color:white;
-  padding:12px 18px;
-  border-radius:12px;
-  cursor:pointer;
+  color:white;padding:12px 18px;border-radius:12px;cursor:pointer
 }
 
-.btn.main,.btn.active{background:#14d8a6;color:#07110e;font-weight:900}
-.error{color:#ff5f7e;margin-top:12px;text-align:center}
-.home-buttons{display:grid;gap:14px}
-.home-btn{padding:18px;border-radius:18px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);cursor:pointer}
-.home-btn:hover,.day:hover,.crypto-card:hover,.stat:hover{transform:scale(1.015)}
+.btn.main{background:#14d8a6;color:#07110e;font-weight:900}
+.btn.danger{background:rgba(255,95,126,.16);border-color:rgba(255,95,126,.45)}
 
-.month-pnl{margin-top:8px;font-size:34px;font-weight:900}
-.green{color:#14d8a6}.red{color:#ff5f7e}
-
-.top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:24px}
-.top-buttons{display:flex;gap:10px;flex-wrap:wrap}
-
-.dashboard,.cs2-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin:24px 0}
+.dashboard{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin:24px 0}
 .card{border-radius:22px;padding:22px}
 .label{color:#b8c0d4;font-size:15px;margin-bottom:10px}
 .value{font-size:38px;font-weight:900}
 
-.calendar-head{display:flex;justify-content:space-between;align-items:center;border-radius:22px;padding:18px 22px;margin-bottom:12px}
+.form-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:12px;
+  margin-top:14px;
+}
+
+.input{
+  width:100%;padding:13px;border-radius:12px;border:none;
+  background:rgba(255,255,255,.1);color:white
+}
+
+.calendar-head{
+  display:flex;justify-content:space-between;align-items:center;
+  border-radius:22px;padding:18px 22px;margin-bottom:12px
+}
+
 .month-title{font-size:32px;font-weight:900}
 .nav{display:flex;gap:10px}
 
 .calendar{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
 .weekday{text-align:center;padding:10px;color:#d2d9e6;font-weight:800}
 .day{min-height:145px;border-radius:14px;padding:12px;cursor:pointer;transition:.2s}
+.day:hover{transform:scale(1.015)}
 .day.win{background:rgba(20,216,166,.18);border:1px solid rgba(20,216,166,.45)}
 .day.loss{background:rgba(255,95,126,.18);border:1px solid rgba(255,95,126,.4)}
 .day-num{text-align:right;font-size:15px;margin-bottom:18px;font-weight:700}
@@ -91,369 +87,324 @@ th{color:#b8c0d4;font-size:14px}
 .close{background:none;border:none;color:white;font-size:28px;cursor:pointer}
 .trade{padding:12px 0;border-bottom:1px solid rgba(255,255,255,.08);line-height:1.7}
 
-.crypto-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:18px}
-.crypto-card{border-radius:20px;padding:18px;display:flex;justify-content:space-between;align-items:center;cursor:pointer}
-.coin-left{display:flex;align-items:center;gap:12px}
-.coin-left img{width:38px}
-.coin-name{font-weight:900;font-size:18px}
-.coin-symbol{color:#b8c0d4;font-size:13px}
-.coin-price{text-align:right;font-weight:900}
-
-.section-title{font-size:28px;font-weight:900;margin:26px 0 14px}
-.stat-list{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
-.stat{border-radius:18px;padding:18px}
-.badge{display:inline-block;padding:5px 9px;border-radius:999px;background:rgba(20,216,166,.18);color:#14d8a6;font-size:12px;font-weight:900}
-
 @media(max-width:900px){
   .top{flex-direction:column;align-items:flex-start}
-  .dashboard,.cs2-grid,.stat-list{grid-template-columns:1fr 1fr}
-  .calendar,.crypto-grid{grid-template-columns:1fr}
+  .dashboard,.form-grid{grid-template-columns:1fr 1fr}
+  .calendar{grid-template-columns:1fr}
   .weekday{display:none}
 }
 
 @media(max-width:600px){
-  .dashboard,.cs2-grid,.stat-list{grid-template-columns:1fr}
+  .dashboard,.form-grid{grid-template-columns:1fr}
 }
 </style>
 </head>
 
 <body>
 
-<div id="loginPage" class="center">
-  <div class="login-card">
-    <div class="logo">Journal</div>
-    <div class="subtitle">Track results, Review mistakes. Build consistency.</div>
-    <input id="username" class="input" placeholder="Username">
-    <input id="password" class="input" type="password" placeholder="Password">
-    <button class="btn main" onclick="login()">Sign In</button>
-    <div id="error" class="error"></div>
-  </div>
-</div>
+<div class="container">
 
-<div id="tradingHomePage" class="center hidden">
-  <div class="home-card">
-    <div class="logo">Journal</div>
-    <div class="subtitle">Track results, Review mistakes. Build consistency.</div>
-    <div class="home-buttons">
-      <div class="home-btn" onclick="goToJournal()"><strong>Journal</strong><br><span class="subtitle">Calendar, trades, and P&L</span></div>
-      <div class="home-btn" onclick="goToCrypto()"><strong>Crypto</strong><br><span class="subtitle">Top crypto prices and charts</span></div>
-    </div>
-  </div>
-</div>
-
-<div id="cs2HomePage" class="center hidden">
-  <div class="home-card">
-    <div class="logo">Journal</div>
-    <div class="subtitle">Track results, Review mistakes. Build consistency.</div>
-    <div class="home-buttons">
-      <div class="home-btn" onclick="openCS2()"><strong>CS2 Stats</strong><br><span class="subtitle">Recent performance, ratings, and match stats</span></div>
-    </div>
-  </div>
-</div>
-
-<div id="tradingAppPage" class="container hidden">
   <div class="top">
     <div>
       <h1>P&L Calendar Journal</h1>
       <div id="monthPnl" class="month-pnl">$0.00</div>
     </div>
-    <div class="top-buttons">
-      <button class="btn" onclick="tradingHome()">Home</button>
-      <button id="journalBtn" class="btn active" onclick="showJournal()">Journal</button>
-      <button id="cryptoBtn" class="btn" onclick="showCrypto()">Crypto</button>
+
+    <button class="btn danger" onclick="logout()">Logout</button>
+  </div>
+
+  <section class="dashboard">
+    <div class="card"><div class="label">Total P&L</div><div id="totalPnl" class="value">$0.00</div></div>
+    <div class="card"><div class="label">Month P&L</div><div id="dashMonthPnl" class="value">$0.00</div></div>
+    <div class="card"><div class="label">Win Rate</div><div id="winRate" class="value">0%</div></div>
+    <div class="card"><div class="label">Trades This Month</div><div id="monthTrades" class="value">0</div></div>
+  </section>
+
+  <div class="card">
+    <h2>Add Trade</h2>
+
+    <div class="form-grid">
+      <input id="stockInput" class="input" placeholder="Stock ex: TSLA">
+      <input id="contractInput" class="input" placeholder="Contract ex: $410 Call">
+      <input id="expiresInput" class="input" type="date">
+      <input id="exitDateInput" class="input" type="date">
+      <input id="contractsInput" class="input" type="number" placeholder="Contracts">
+      <input id="entryInput" class="input" type="number" step="0.01" placeholder="Entry total $">
+      <input id="exitInput" class="input" type="number" step="0.01" placeholder="Exit total $">
+      <button class="btn main" onclick="addTrade()">Save Trade</button>
     </div>
   </div>
 
-  <div id="journalView">
-    <section class="dashboard">
-      <div class="card"><div class="label">Total P&L</div><div id="totalPnl" class="value">$0.00</div></div>
-      <div class="card"><div class="label">Month P&L</div><div id="dashMonthPnl" class="value">$0.00</div></div>
-      <div class="card"><div class="label">Win Rate</div><div id="winRate" class="value">0%</div></div>
-      <div class="card"><div class="label">Trades This Month</div><div id="monthTrades" class="value">0</div></div>
-    </section>
-
-    <div class="calendar-head">
-      <div id="monthTitle" class="month-title"></div>
-      <div class="nav">
-        <button onclick="changeMonth(-1)">←</button>
-        <button onclick="goToday()">Today</button>
-        <button onclick="changeMonth(1)">→</button>
-      </div>
-    </div>
-
-    <div class="calendar" id="calendar"></div>
-
-    <div class="trades-table">
-      <table>
-        <thead><tr><th>Exit Date</th><th>Stock</th><th>Contract</th><th>Expires</th><th>Contracts</th><th>Entry</th><th>Exit</th><th>P&L</th></tr></thead>
-        <tbody id="tradeTable"></tbody>
-      </table>
+  <div class="calendar-head" style="margin-top:24px;">
+    <div id="monthTitle" class="month-title"></div>
+    <div class="nav">
+      <button onclick="changeMonth(-1)">←</button>
+      <button onclick="goToday()">Today</button>
+      <button onclick="changeMonth(1)">→</button>
     </div>
   </div>
 
-  <div id="cryptoView" class="hidden">
-    <div class="calendar-head">
-      <div class="month-title">Top 10 Crypto</div>
-      <button class="btn" onclick="loadCrypto()">Refresh</button>
-    </div>
-    <div id="cryptoStatus" class="card">Loading crypto prices...</div>
-    <div id="cryptoGrid" class="crypto-grid"></div>
+  <div class="calendar" id="calendar"></div>
+
+  <div class="trades-table">
+    <table>
+      <thead>
+        <tr>
+          <th>Exit Date</th>
+          <th>Stock</th>
+          <th>Contract</th>
+          <th>Expires</th>
+          <th>Contracts</th>
+          <th>Entry</th>
+          <th>Exit</th>
+          <th>P&L</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="tradeTable"></tbody>
+    </table>
   </div>
-</div>
 
-<div id="cs2Page" class="container hidden">
-  <div class="top">
-    <div>
-      <h1>CS2 Dashboard</h1>
-      <div class="subtitle">Leetify profile overview</div>
-    </div>
-    <button class="btn" onclick="cs2Home()">Home</button>
-  </div>
-
-  <section class="cs2-grid">
-    <div class="card"><div class="label">Premier Rating</div><div class="value green">14,004</div></div>
-    <div class="card"><div class="label">FACEIT Level</div><div class="value">4</div></div>
-    <div class="card"><div class="label">Win Rate</div><div class="value">48%</div></div>
-    <div class="card"><div class="label">Leetify Rating</div><div class="value green">+1.12</div></div>
-  </section>
-
-  <div class="section-title">Last 30 Matches</div>
-  <section class="cs2-grid">
-    <div class="card"><div class="label">Aim</div><div class="value green">67</div></div>
-    <div class="card"><div class="label">Utility</div><div class="value">46</div></div>
-    <div class="card"><div class="label">Positioning</div><div class="value">54</div></div>
-    <div class="card"><div class="label">Headshot Accuracy</div><div class="value">20%</div></div>
-  </section>
-
-  <div class="section-title">Core Stats</div>
-  <section class="stat-list">
-    <div class="stat"><div class="label">Strengths</div><div>Aim rating is your strongest category right now.</div></div>
-    <div class="stat"><div class="label">Needs Work</div><div>Utility usage is the lowest rating shown, so improving flashes/smokes could help a lot.</div></div>
-    <div class="stat"><div class="label">Consistency</div><div>Your win rate is close to even, so small improvements can push you above 50%.</div></div>
-    <div class="stat"><div class="label">Profile</div><a href="https://leetify.com/public/profile/76561198353202501" target="_blank" style="color:#14d8a6;">Open Leetify Profile</a></div>
-  </section>
-
-  <div class="section-title">Recent Match Example</div>
-  <section class="card">
-    <div class="badge">Mirage</div>
-    <h2 style="margin:10px 0;">13 - 10 Win</h2>
-    <div class="subtitle">16 kills / 20 deaths</div>
-    <div class="label">K/D</div>
-    <div class="value red">0.80</div>
-  </section>
 </div>
 
 <div class="modal" id="modal">
   <div class="modal-card">
-    <div class="modal-head"><h2 id="modalTitle">Trades</h2><button class="close" onclick="closeModal()">×</button></div>
+    <div class="modal-head">
+      <h2 id="modalTitle">Trades</h2>
+      <button class="close" onclick="closeModal()">×</button>
+    </div>
     <div id="tradeList"></div>
   </div>
 </div>
 
-<div class="modal" id="cryptoChartModal">
-  <div class="modal-card">
-    <div class="modal-head"><h2 id="cryptoChartTitle">Crypto Chart</h2><button class="close" onclick="closeCryptoChart()">×</button></div>
-    <canvas id="cryptoChart"></canvas>
-  </div>
-</div>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+import { getAuth,onAuthStateChanged,signOut } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+import { getFirestore,collection,addDoc,getDocs,deleteDoc,doc } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
-<script>
-const trades=[
-{exitDate:"2026-04-24",stock:"INTC",contract:"$83 Call",expires:"2026-04-24",contracts:1,entry:9.04,exit:8.94},
-{exitDate:"2026-04-27",stock:"GOOGL",contract:"$350 Call",expires:"2026-04-27",contracts:3,entry:168.12,exit:263.86},
-{exitDate:"2026-04-27",stock:"NVDA",contract:"$212.5 Call",expires:"2026-04-27",contracts:2,entry:40.08,exit:39.90},
-{exitDate:"2026-04-28",stock:"AAPL",contract:"$275 Call",expires:"2026-04-29",contracts:5,entry:366.20,exit:378.74},
-{exitDate:"2026-04-29",stock:"PYPL",contract:"$52 Call",expires:"2026-05-01",contracts:4,entry:110.16,exit:35.82},
-{exitDate:"2026-04-30",stock:"TSLA",contract:"$380 Call",expires:"2026-05-01",contracts:3,entry:525.12,exit:629.84},
-{exitDate:"2026-05-01",stock:"HPE",contract:"$30 Call",expires:"2026-05-15",contracts:2,entry:98.08,exit:121.90},
-{exitDate:"2026-05-01",stock:"MSFT",contract:"$420 Call",expires:"2026-05-01",contracts:8,entry:629.32,exit:111.64},
-{exitDate:"2026-05-04",stock:"AMZN",contract:"$275 Call",expires:"2026-05-04",contracts:5,entry:215.20,exit:714.76},
-{exitDate:"2026-05-05",stock:"QQQ",contract:"$679 Put",expires:"2026-05-05",contracts:2,entry:132.08,exit:101.90},
-{exitDate:"2026-05-05",stock:"TSLA",contract:"$410 Call",expires:"2026-05-06",contracts:3,entry:450.12,exit:617.85},
-{exitDate:"2026-05-05",stock:"TTD",contract:"$30 Call",expires:"2026-06-18",contracts:1,entry:108.04,exit:104.94},
-{exitDate:"2026-05-06",stock:"NVDA",contract:"$210 Call",expires:"2026-05-06",contracts:3,entry:90.12,exit:39.84},
-{exitDate:"2026-05-06",stock:"NVDA",contract:"$207.5 Call",expires:"2026-05-06",contracts:15,entry:675.60,exit:1079.31},
-{exitDate:"2026-05-07",stock:"AAPL",contract:"$295 Call",expires:"2026-05-08",contracts:17,entry:1180.68,exit:628.21},
-{exitDate:"2026-05-11",stock:"APLD",contract:"$45 Call",expires:"2026-06-18",contracts:1,entry:470.04,exit:529.93},
-{exitDate:"2026-05-11",stock:"P",contract:"$90 Call",expires:"2026-05-15",contracts:8,entry:200.32,exit:799.63},
-{exitDate:"2026-05-12",stock:"HL",contract:"$18.5 Put",expires:"2026-05-15",contracts:3,entry:45.12,exit:80.86},
-{exitDate:"2026-05-14",stock:"AVGO",contract:"$450 Call",expires:"2026-05-15",contracts:11,entry:1336.44,exit:1856.46},
-{exitDate:"2026-05-15",stock:"AXP",contract:"$315 Call",expires:"2026-05-15",contracts:5,entry:550.20,exit:489.76},
-{exitDate:"2026-05-18",stock:"MSFT",contract:"$430 Call",expires:"2026-05-18",contracts:20,entry:978.80,exit:599.06},
-{exitDate:"2026-05-19",stock:"MSFT",contract:"$440 Call",expires:"2026-05-20",contracts:13,entry:1157.52,exit:1689.38},
-{exitDate:"2026-05-19",stock:"QQQ",contract:"$694 Put",expires:"2026-05-19",contracts:3,entry:247.12,exit:74.86},
-{exitDate:"2026-05-20",stock:"TSLA",contract:"$417.5 Call",expires:"2026-05-20",contracts:20,entry:1782.80,exit:1899.08},
-{exitDate:"2026-05-21",stock:"IWM",contract:"$281 Call",expires:"2026-05-21",contracts:15,entry:1200.60,exit:989.31},
-{exitDate:"2026-05-22",stock:"IWM",contract:"$286 Call",expires:"2026-05-22",contracts:10,entry:700.40,exit:249.56},
-{exitDate:"2026-05-22",stock:"QQQ",contract:"$724 Call",expires:"2026-05-22",contracts:10,entry:1010.40,exit:91.53},
-{exitDate:"2026-05-28",stock:"ZS",contract:"$175 Call",expires:"2026-06-18",contracts:5,entry:300.20,exit:274.77},
-{exitDate:"2026-06-01",stock:"MSFT",contract:"$465 Call",expires:"2026-06-01",contracts:3,entry:318.12,exit:479.86},
-{exitDate:"2026-06-01",stock:"QQQ",contract:"$741 Call",expires:"2026-06-01",contracts:10,entry:700.40,exit:820.50},
-{exitDate:"2026-06-03",stock:"NVDA",contract:"$237.5 Call",expires:"2026-06-03",contracts:10,entry:810.40,exit:0.00},
-{exitDate:"2026-06-04",stock:"CVS",contract:"$98 Call",expires:"2026-06-12",contracts:12,entry:509.48,exit:635.44},
-{exitDate:"2026-06-08",stock:"AAPL",contract:"$317.5 Call",expires:"2026-06-08",contracts:6,entry:618.24,exit:887.72}
-].map(t=>({...t,pnl:t.exit-t.entry}));
+const firebaseConfig={
+  apiKey:"AIzaSyCQOCEH12LCI0yPKid0NjlFVDWjhpQtgJc",
+  authDomain:"profitandloss-d332f.firebaseapp.com",
+  projectId:"profitandloss-d332f",
+  storageBucket:"profitandloss-d332f.firebasestorage.app",
+  messagingSenderId:"29521289621",
+  appId:"1:29521289621:web:c7a77d4e9714c21ef4169c"
+};
 
+const app=initializeApp(firebaseConfig);
+const auth=getAuth(app);
+const db=getFirestore(app);
+
+let currentUser=null;
+let trades=[];
 let viewDate=new Date();
-let cryptoChartInstance=null;
 
-function setProfile1Background(){
-  document.body.style.background=`linear-gradient(rgba(10,15,25,.48),rgba(10,15,25,.58)),url("profile1-bg.jpg")`;
-  document.body.style.backgroundSize="cover";
-  document.body.style.backgroundPosition="center";
-  document.body.style.backgroundAttachment="fixed";
-}
-
-function setProfile3Background(){
-  document.body.style.background=`linear-gradient(rgba(10,15,25,.35),rgba(10,15,25,.55)),url("profile3-bg.png")`;
-  document.body.style.backgroundSize="cover";
-  document.body.style.backgroundPosition="center";
-  document.body.style.backgroundAttachment="fixed";
-}
-
-function login(){
-  const u=document.getElementById("username").value.trim();
-  const p=document.getElementById("password").value.trim();
-
-  if(u==="1" && p==="1"){
-    setProfile1Background();
-    document.getElementById("loginPage").classList.add("hidden");
-    document.getElementById("tradingHomePage").classList.remove("hidden");
-  }else if(u==="3" && p==="3"){
-    setProfile3Background();
-    document.getElementById("loginPage").classList.add("hidden");
-    document.getElementById("cs2HomePage").classList.remove("hidden");
-  }else{
-    document.getElementById("error").textContent="Incorrect username or password";
+onAuthStateChanged(auth,async user=>{
+  if(!user){
+    window.location.href="/login";
+    return;
   }
+
+  currentUser=user;
+  await loadTrades();
+});
+
+function money(n){
+  return Number(n || 0).toLocaleString("en-US",{style:"currency",currency:"USD"});
 }
 
-function tradingHome(){tradingAppPage.classList.add("hidden");tradingHomePage.classList.remove("hidden")}
-function cs2Home(){cs2Page.classList.add("hidden");cs2HomePage.classList.remove("hidden")}
-function openCS2(){cs2HomePage.classList.add("hidden");cs2Page.classList.remove("hidden")}
-function goToJournal(){tradingHomePage.classList.add("hidden");tradingAppPage.classList.remove("hidden");showJournal()}
-function goToCrypto(){tradingHomePage.classList.add("hidden");tradingAppPage.classList.remove("hidden");showCrypto()}
+function dateKey(d){
+  return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+}
 
-function money(n){return n.toLocaleString("en-US",{style:"currency",currency:"USD"})}
-function dateKey(d){return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}
+async function loadTrades(){
+  const snap=await getDocs(collection(db,"users",currentUser.uid,"trades"));
 
-function render(){renderStats();renderCalendar();renderTable()}
+  trades=snap.docs.map(d=>({
+    id:d.id,
+    ...d.data()
+  })).map(t=>({
+    ...t,
+    pnl:Number(t.exit)-Number(t.entry)
+  }));
+
+  trades.sort((a,b)=>a.exitDate.localeCompare(b.exitDate));
+
+  render();
+}
+
+window.addTrade=async function(){
+  const trade={
+    stock:stockInput.value.trim().toUpperCase(),
+    contract:contractInput.value.trim(),
+    expires:expiresInput.value,
+    exitDate:exitDateInput.value,
+    contracts:Number(contractsInput.value),
+    entry:Number(entryInput.value),
+    exit:Number(exitInput.value)
+  };
+
+  if(!trade.stock || !trade.contract || !trade.expires || !trade.exitDate){
+    alert("Fill out stock, contract, expiration, and exit date.");
+    return;
+  }
+
+  await addDoc(collection(db,"users",currentUser.uid,"trades"),trade);
+
+  stockInput.value="";
+  contractInput.value="";
+  expiresInput.value="";
+  exitDateInput.value="";
+  contractsInput.value="";
+  entryInput.value="";
+  exitInput.value="";
+
+  await loadTrades();
+}
+
+window.deleteTrade=async function(id){
+  if(!confirm("Delete this trade?")) return;
+
+  await deleteDoc(doc(db,"users",currentUser.uid,"trades",id));
+
+  await loadTrades();
+}
+
+window.logout=async function(){
+  await signOut(auth);
+  window.location.href="/login";
+}
+
+function render(){
+  renderStats();
+  renderCalendar();
+  renderTable();
+}
 
 function renderStats(){
-  const y=viewDate.getFullYear(),m=viewDate.getMonth();
-  const monthTradesArr=trades.filter(t=>{const d=new Date(t.exitDate+"T00:00:00");return d.getFullYear()===y&&d.getMonth()===m});
+  const y=viewDate.getFullYear();
+  const m=viewDate.getMonth();
+
+  const monthTradesArr=trades.filter(t=>{
+    const d=new Date(t.exitDate+"T00:00:00");
+    return d.getFullYear()===y && d.getMonth()===m;
+  });
+
   const totalPnlValue=trades.reduce((s,t)=>s+t.pnl,0);
   const monthPnlValue=monthTradesArr.reduce((s,t)=>s+t.pnl,0);
   const wins=trades.filter(t=>t.pnl>0).length;
-  const winRate=Math.round((wins/trades.length)*100);
+  const winRate=trades.length ? Math.round((wins/trades.length)*100) : 0;
 
   totalPnl.textContent=money(totalPnlValue);
   totalPnl.className="value "+(totalPnlValue>=0?"green":"red");
+
   dashMonthPnl.textContent=money(monthPnlValue);
   dashMonthPnl.className="value "+(monthPnlValue>=0?"green":"red");
+
   monthPnl.textContent=money(monthPnlValue);
   monthPnl.className="month-pnl "+(monthPnlValue>=0?"green":"red");
+
   document.getElementById("winRate").textContent=winRate+"%";
   document.getElementById("monthTrades").textContent=monthTradesArr.length;
 }
 
 function renderCalendar(){
   calendar.innerHTML="";
-  ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"].forEach(x=>calendar.innerHTML+=`<div class="weekday">${x}</div>`);
-  const y=viewDate.getFullYear(),m=viewDate.getMonth();
+
+  ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"].forEach(x=>{
+    calendar.innerHTML+=`<div class="weekday">${x}</div>`;
+  });
+
+  const y=viewDate.getFullYear();
+  const m=viewDate.getMonth();
+
   monthTitle.textContent=viewDate.toLocaleString("default",{month:"long"})+" "+y;
-  const first=new Date(y,m,1),start=new Date(first);start.setDate(start.getDate()-first.getDay());
+
+  const first=new Date(y,m,1);
+  const start=new Date(first);
+
+  start.setDate(start.getDate()-first.getDay());
 
   for(let i=0;i<42;i++){
-    const d=new Date(start);d.setDate(start.getDate()+i);
+    const d=new Date(start);
+    d.setDate(start.getDate()+i);
+
     const key=dateKey(d);
     const dayTrades=trades.filter(t=>t.exitDate===key);
     const pnl=dayTrades.reduce((s,t)=>s+t.pnl,0);
+
     const day=document.createElement("div");
-    day.className="day "+(pnl>0?"win":pnl<0?"loss":"")+(d.getMonth()!==m?" muted":"");
+
+    day.className=
+      "day "+
+      (pnl>0?"win":pnl<0?"loss":"")+
+      (d.getMonth()!==m?" muted":"");
+
     day.onclick=()=>openModal(key);
-    day.innerHTML=`<div class="day-num">${d.getDate()}</div>${dayTrades.length?`<div class="day-pnl">${money(pnl)}</div><div class="day-trades">${dayTrades.length} Trade${dayTrades.length>1?"s":""}</div>`:""}`;
+
+    day.innerHTML=`
+      <div class="day-num">${d.getDate()}</div>
+      ${dayTrades.length?`
+        <div class="day-pnl">${money(pnl)}</div>
+        <div class="day-trades">${dayTrades.length} Trade${dayTrades.length>1?"s":""}</div>
+      `:""}
+    `;
+
     calendar.appendChild(day);
   }
 }
 
 function renderTable(){
-  tradeTable.innerHTML=trades.map(t=>`<tr><td>${t.exitDate}</td><td><strong>${t.stock}</strong></td><td>${t.contract}</td><td>${t.expires}</td><td>${t.contracts}</td><td>${money(t.entry)}</td><td>${money(t.exit)}</td><td class="${t.pnl>=0?"green":"red"}"><strong>${money(t.pnl)}</strong></td></tr>`).join("");
+  tradeTable.innerHTML=trades.map(t=>`
+    <tr>
+      <td>${t.exitDate}</td>
+      <td><strong>${t.stock}</strong></td>
+      <td>${t.contract}</td>
+      <td>${t.expires}</td>
+      <td>${t.contracts}</td>
+      <td>${money(t.entry)}</td>
+      <td>${money(t.exit)}</td>
+      <td class="${t.pnl>=0?"green":"red"}"><strong>${money(t.pnl)}</strong></td>
+      <td><button class="btn danger" onclick="deleteTrade('${t.id}')">Delete</button></td>
+    </tr>
+  `).join("");
 }
 
-function openModal(date){
+window.openModal=function(date){
   const dayTrades=trades.filter(t=>t.exitDate===date);
+
   modalTitle.textContent="Trades - "+date;
-  tradeList.innerHTML=dayTrades.length?dayTrades.map(t=>`<div class="trade"><strong>${t.stock} ${t.contract}</strong><br>Expires: ${t.expires}<br>Contracts: ${t.contracts}<br>Entry: ${money(t.entry)}<br>Exit: ${money(t.exit)}<br>P&L: <span class="${t.pnl>=0?"green":"red"}">${money(t.pnl)}</span></div>`).join(""):`<p style="color:#b8c0d4;">No trades for this day.</p>`;
+
+  tradeList.innerHTML=dayTrades.length
+    ? dayTrades.map(t=>`
+      <div class="trade">
+        <strong>${t.stock} ${t.contract}</strong><br>
+        Expires: ${t.expires}<br>
+        Contracts: ${t.contracts}<br>
+        Entry: ${money(t.entry)}<br>
+        Exit: ${money(t.exit)}<br>
+        P&L: <span class="${t.pnl>=0?"green":"red"}">${money(t.pnl)}</span>
+      </div>
+    `).join("")
+    : `<p style="color:#b8c0d4;">No trades for this day.</p>`;
+
   modal.classList.add("show");
 }
 
-function closeModal(){modal.classList.remove("show")}
-function changeMonth(n){viewDate.setMonth(viewDate.getMonth()+n);render()}
-function goToday(){viewDate=new Date();render()}
-
-function showJournal(){
-  journalView.classList.remove("hidden");
-  cryptoView.classList.add("hidden");
-  journalBtn.classList.add("active");
-  cryptoBtn.classList.remove("active");
-  monthPnl.style.display="block";
+window.closeModal=function(){
+  modal.classList.remove("show");
 }
 
-async function showCrypto(){
-  journalView.classList.add("hidden");
-  cryptoView.classList.remove("hidden");
-  cryptoBtn.classList.add("active");
-  journalBtn.classList.remove("active");
-  monthPnl.style.display="none";
-  await loadCrypto();
+window.changeMonth=function(n){
+  viewDate.setMonth(viewDate.getMonth()+n);
+  render();
 }
 
-async function loadCrypto(){
-  cryptoStatus.style.display="block";
-  cryptoStatus.textContent="Loading crypto prices...";
-  cryptoGrid.innerHTML="";
-
-  try{
-    const res=await fetch("https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=10&page=1&sparkline=false&price_change_percentage=24h,7d");
-    const data=await res.json();
-    cryptoStatus.style.display="none";
-
-    cryptoGrid.innerHTML=data.map(c=>{
-      const m24=c.price_change_percentage_24h||0;
-      const m7=c.price_change_percentage_7d_in_currency||0;
-      return `<div class="crypto-card" onclick="loadCryptoChart('${c.id}','${c.name}')"><div class="coin-left"><img src="${c.image}"><div><div class="coin-name">${c.name}</div><div class="coin-symbol">${c.symbol.toUpperCase()} • Rank #${c.market_cap_rank}</div></div></div><div class="coin-price">${money(c.current_price)}<div class="${m24>=0?"green":"red"}">24h: ${m24.toFixed(2)}%</div><div class="${m7>=0?"green":"red"}">7d: ${m7.toFixed(2)}%</div></div></div>`;
-    }).join("");
-  }catch(e){
-    cryptoStatus.textContent="Could not load crypto prices.";
-  }
+window.goToday=function(){
+  viewDate=new Date();
+  render();
 }
-
-async function loadCryptoChart(id,name){
-  cryptoChartTitle.textContent=name+" — Last 7 Days";
-  cryptoChartModal.classList.add("show");
-
-  const res=await fetch(`https://api.coingecko.com/api/v3/coins/${id}/market_chart?vs_currency=usd&days=7`);
-  const data=await res.json();
-
-  if(cryptoChartInstance)cryptoChartInstance.destroy();
-
-  cryptoChartInstance=new Chart(cryptoChart,{
-    type:"line",
-    data:{
-      labels:data.prices.map(p=>new Date(p[0]).toLocaleDateString()),
-      datasets:[{label:name,data:data.prices.map(p=>p[1]),borderWidth:3,tension:.35,pointRadius:0}]
-    },
-    options:{
-      plugins:{legend:{labels:{color:"#e8eef7"}}},
-      scales:{x:{ticks:{color:"#b8c0d4"}},y:{ticks:{color:"#b8c0d4"}}}
-    }
-  });
-}
-
-function closeCryptoChart(){cryptoChartModal.classList.remove("show")}
-
-render();
 </script>
+
 </body>
 </html>
