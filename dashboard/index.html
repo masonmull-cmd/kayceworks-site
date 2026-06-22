@@ -110,7 +110,7 @@ th{color:#b8c0d4;font-size:14px}
 
   <div class="top">
     <div>
-      <h1>P&L Calendar Journal</h1>
+      <h1>KayceWorks Dashboard</h1>
       <div id="monthPnl" class="month-pnl">$0.00</div>
     </div>
 
@@ -125,29 +125,15 @@ th{color:#b8c0d4;font-size:14px}
   </section>
 
   <div class="card">
-    <h2>Add Trade</h2>
+    <h2>Import Robinhood Trades</h2>
 
-    <div class="form-grid">
-      <input id="stockInput" class="input" placeholder="Stock ex: TSLA">
-      <input id="contractInput" class="input" placeholder="Contract ex: $410 Call">
-      <input id="expiresInput" class="input" type="date">
-      <input id="exitDateInput" class="input" type="date">
-      <input id="contractsInput" class="input" type="number" placeholder="Contracts">
-      <input id="entryInput" class="input" type="number" step="0.01" placeholder="Entry total $">
-      <input id="exitInput" class="input" type="number" step="0.01" placeholder="Exit total $">
-      <button class="btn main" onclick="addTrade()">Save Trade</button>
-    </div>
-  </div>
-
-  <div class="card" style="margin-top:24px;">
-    <h2>Import Robinhood CSV</h2>
     <p class="import-note">
-      Upload your Robinhood activity report CSV. KayceWorks will group BTO/STC fills,
-      combine partial fills, calculate totals, and save the trades to your account.
+      Upload your Robinhood activity report and KayceWorks will automatically
+      build your trade journal, calculate P&L, and populate the calendar.
     </p>
 
     <div class="form-grid">
-      <input id="csvInput" class="input file-input" type="file" accept=".csv">
+      <input id="csvInput" type="file" accept=".csv" class="input file-input">
       <button class="btn main" onclick="importCSV()">Import Trades</button>
     </div>
 
@@ -251,240 +237,6 @@ async function loadTrades(){
 
   render();
 }
-
-window.addTrade=async function(){
-  const trade={
-    stock:stockInput.value.trim().toUpperCase(),
-    contract:contractInput.value.trim(),
-    expires:expiresInput.value,
-    exitDate:exitDateInput.value,
-    contracts:Number(contractsInput.value),
-    entry:Number(entryInput.value),
-    exit:Number(exitInput.value)
-  };
-
-  if(!trade.stock || !trade.contract || !trade.expires || !trade.exitDate){
-    alert("Fill out stock, contract, expiration, and exit date.");
-    return;
-  }
-
-  await addDoc(collection(db,"users",currentUser.uid,"trades"),trade);
-
-  stockInput.value="";
-  contractInput.value="";
-  expiresInput.value="";
-  exitDateInput.value="";
-  contractsInput.value="";
-  entryInput.value="";
-  exitInput.value="";
-
-  await loadTrades();
-}
-
-
-function parseCSV(text){
-  const rows=[];
-  let row=[];
-  let cell="";
-  let inQuotes=false;
-
-  for(let i=0;i<text.length;i++){
-    const char=text[i];
-    const next=text[i+1];
-
-    if(char === '"' && inQuotes && next === '"'){
-      cell += '"';
-      i++;
-    }else if(char === '"'){
-      inQuotes = !inQuotes;
-    }else if(char === "," && !inQuotes){
-      row.push(cell);
-      cell="";
-    }else if((char === "\n" || char === "\r") && !inQuotes){
-      if(cell.length || row.length){
-        row.push(cell);
-        rows.push(row);
-        row=[];
-        cell="";
-      }
-      if(char === "\r" && next === "\n") i++;
-    }else{
-      cell += char;
-    }
-  }
-
-  if(cell.length || row.length){
-    row.push(cell);
-    rows.push(row);
-  }
-
-  return rows;
-}
-
-function moneyToNumber(value){
-  if(!value) return 0;
-  return Number(
-    String(value)
-      .replaceAll("$","")
-      .replaceAll(",","")
-      .replace("(","-")
-      .replace(")","")
-      .trim()
-  ) || 0;
-}
-
-function toISODate(dateText){
-  const parts=String(dateText).split("/");
-  if(parts.length !== 3) return "";
-  const m=parts[0].padStart(2,"0");
-  const d=parts[1].padStart(2,"0");
-  const y=parts[2];
-  return `${y}-${m}-${d}`;
-}
-
-function cleanStrike(strike){
-  const n=Number(strike);
-  return Number.isInteger(n) ? String(n) : String(n).replace(/0+$/,"").replace(/\.$/,"");
-}
-
-function parseOptionDescription(desc, code){
-  let match;
-
-  if(code === "OEXP"){
-    match = String(desc).match(/Option Expiration for ([A-Z]+) (\d+\/\d+\/\d{4}) (Call|Put) \$([\d.]+)/);
-  }else{
-    match = String(desc).match(/^([A-Z]+) (\d+\/\d+\/\d{4}) (Call|Put) \$([\d.]+)/);
-  }
-
-  if(!match) return null;
-
-  return {
-    stock:match[1],
-    expiresRaw:match[2],
-    type:match[3],
-    strike:match[4]
-  };
-}
-
-window.importCSV=async function(){
-  const file=csvInput.files[0];
-
-  if(!file){
-    alert("Choose a Robinhood CSV file first.");
-    return;
-  }
-
-  importStatus.textContent="Reading CSV...";
-
-  const text=await file.text();
-  const parsed=parseCSV(text);
-
-  if(parsed.length < 2){
-    importStatus.textContent="No rows found in this CSV.";
-    return;
-  }
-
-  const headers=parsed[0].map(h=>h.trim());
-  const getIndex=name=>headers.indexOf(name);
-
-  const idx={
-    activity:getIndex("Activity Date"),
-    instrument:getIndex("Instrument"),
-    description:getIndex("Description"),
-    code:getIndex("Trans Code"),
-    quantity:getIndex("Quantity"),
-    amount:getIndex("Amount")
-  };
-
-  if(Object.values(idx).some(i=>i === -1)){
-    importStatus.textContent="This CSV does not look like a Robinhood activity report.";
-    return;
-  }
-
-  const grouped={};
-
-  for(const row of parsed.slice(1)){
-    const code=(row[idx.code] || "").trim();
-
-    if(!["BTO","STC","OEXP"].includes(code)) continue;
-
-    const description=row[idx.description] || "";
-    const option=parseOptionDescription(description,code);
-
-    if(!option) continue;
-
-    const key=`${option.stock}|${option.expiresRaw}|${option.type}|${option.strike}`;
-
-    if(!grouped[key]){
-      grouped[key]={
-        stock:option.stock,
-        contract:`$${cleanStrike(option.strike)} ${option.type}`,
-        expires:toISODate(option.expiresRaw),
-        exitDate:"",
-        contracts:0,
-        entry:0,
-        exit:0,
-        btoQty:0,
-        stcQty:0
-      };
-    }
-
-    const trade=grouped[key];
-    const qtyText=String(row[idx.quantity] || "");
-    const qtyMatch=qtyText.match(/\d+(\.\d+)?/);
-    const qty=qtyMatch ? Number(qtyMatch[0]) : 0;
-    const amount=moneyToNumber(row[idx.amount]);
-    const activityDate=toISODate(row[idx.activity]);
-
-    if(code === "BTO"){
-      trade.entry += Math.abs(amount);
-      trade.btoQty += qty;
-    }
-
-    if(code === "STC"){
-      trade.exit += amount;
-      trade.stcQty += qty;
-      trade.exitDate = !trade.exitDate || activityDate > trade.exitDate ? activityDate : trade.exitDate;
-    }
-
-    if(code === "OEXP"){
-      trade.exit += 0;
-      trade.stcQty += qty;
-      trade.exitDate = !trade.exitDate || activityDate > trade.exitDate ? activityDate : trade.exitDate;
-    }
-
-    trade.contracts=Math.max(trade.btoQty,trade.stcQty);
-  }
-
-  const importedTrades=Object.values(grouped)
-    .filter(t=>t.entry > 0 && t.exitDate)
-    .map(t=>({
-      stock:t.stock,
-      contract:t.contract,
-      expires:t.expires,
-      exitDate:t.exitDate,
-      contracts:Number(t.contracts),
-      entry:Number(t.entry.toFixed(2)),
-      exit:Number(t.exit.toFixed(2))
-    }));
-
-  if(!importedTrades.length){
-    importStatus.textContent="No completed option trades found.";
-    return;
-  }
-
-  importStatus.textContent=`Importing ${importedTrades.length} trades...`;
-
-  for(const trade of importedTrades){
-    await addDoc(collection(db,"users",currentUser.uid,"trades"),trade);
-  }
-
-  csvInput.value="";
-  importStatus.textContent=`Imported ${importedTrades.length} trades successfully.`;
-
-  await loadTrades();
-}
-
 
 window.deleteTrade=async function(id){
   if(!confirm("Delete this trade?")) return;
